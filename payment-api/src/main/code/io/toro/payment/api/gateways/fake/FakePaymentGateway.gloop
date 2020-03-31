@@ -1,0 +1,404 @@
+{
+    "input": [
+        {
+            "name": "paymentRequest",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentRequest"
+        }
+    ],
+    "output": [
+        {
+            "name": "paymentResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentResponse"
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "transctionId"
+                                }
+                            ]
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "UUID.randomUUID()",
+                            "evaluate": true,
+                            "to": [
+                                "transctionId"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "expression": "paymentRequest.requestType",
+                    "children": [
+                        {
+                            "type": "block",
+                            "label": "authorise",
+                            "children": [
+                                {
+                                    "type": "invokeGloop",
+                                    "name": "io.toro.payment.api.gateways.fake.requestTypes.Authorise",
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "paymentAmount",
+                                                "value"
+                                            ],
+                                            "to": [
+                                                "authoriseInput",
+                                                "amount"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "paymentAmount",
+                                                "currencyCode"
+                                            ],
+                                            "to": [
+                                                "authoriseInput",
+                                                "currencyCode"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "authorisation",
+                                                "creditCard",
+                                                "number"
+                                            ],
+                                            "to": [
+                                                "authoriseInput",
+                                                "card",
+                                                "cardNumber"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "authorisation",
+                                                "creditCard",
+                                                "verificationValue"
+                                            ],
+                                            "to": [
+                                                "authoriseInput",
+                                                "card",
+                                                "code"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "\"${paymentRequest.authorisation.creditCard.expiryMonth}-${paymentRequest.authorisation.creditCard.expiryYear}\"",
+                                            "evaluate": true,
+                                            "to": [
+                                                "authoriseInput",
+                                                "card",
+                                                "expirationDate"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "billingAddress",
+                                                "line1"
+                                            ],
+                                            "to": [
+                                                "authoriseInput",
+                                                "billingAddress",
+                                                "address1"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "billingAddress",
+                                                "postalCode"
+                                            ],
+                                            "to": [
+                                                "authoriseInput",
+                                                "billingAddress",
+                                                "postalCode"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "billingAddress",
+                                                "city"
+                                            ],
+                                            "to": [
+                                                "authoriseInput",
+                                                "billingAddress",
+                                                "city"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "billingAddress",
+                                                "countryCode"
+                                            ],
+                                            "to": [
+                                                "authoriseInput",
+                                                "billingAddress",
+                                                "countryCode"
+                                            ]
+                                        }
+                                    ],
+                                    "outputs": [
+                                        {
+                                            "from": [
+                                                "authoriseOutput",
+                                                "paymentStatus"
+                                            ],
+                                            "to": [
+                                                "paymentResponse",
+                                                "message"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "if ( $gloopOutput.authoriseOutput.paymentStatus.equalsIgnoreCase ( 'error' ) )\n\tpaymentResponse.errors.message = 'Authorise failed.'",
+                                            "evaluate": true,
+                                            "to": [
+                                                "paymentResponse",
+                                                "errors",
+                                                "message"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "transctionId",
+                                            "evaluate": true,
+                                            "to": [
+                                                "paymentResponse",
+                                                "serverTransactionReference"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "paymentRequest.paymentGatewayId",
+                                            "evaluate": true,
+                                            "to": [
+                                                "paymentResponse",
+                                                "paymentGatewayId"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "className": "io.toro.martini.GroovyMethods",
+                                    "methodName": "savePackageProperty",
+                                    "parameters": [
+                                        "java.lang.String",
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "transctionId"
+                                            ],
+                                            "to": [
+                                                "value"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "fake.last.transactionId",
+                                            "to": [
+                                                "key"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "className": "io.toro.martini.GroovyMethods",
+                                    "methodName": "savePackageProperty",
+                                    "parameters": [
+                                        "java.lang.String",
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "type": "set",
+                                            "expression": "fake.last.authorised.amount",
+                                            "to": [
+                                                "key"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "paymentResponse.errors.message ? 0 : paymentRequest.paymentAmount.value",
+                                            "evaluate": true,
+                                            "to": [
+                                                "value"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "block",
+                            "label": "capture",
+                            "children": [
+                                {
+                                    "type": "invokeGloop",
+                                    "name": "io.toro.payment.api.gateways.fake.requestTypes.Capture",
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "capture",
+                                                "serverTransactionReference"
+                                            ],
+                                            "to": [
+                                                "captureInput",
+                                                "transactionId"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "paymentAmount",
+                                                "value"
+                                            ],
+                                            "to": [
+                                                "captureInput",
+                                                "amount"
+                                            ]
+                                        }
+                                    ],
+                                    "outputs": [
+                                        {
+                                            "type": "set",
+                                            "expression": "Fake",
+                                            "to": [
+                                                "paymentResponse",
+                                                "paymentGatewayId"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "if ( !$gloopOutput.captureOutput.success )\n\t$gloopOutput.captureOutput.message",
+                                            "evaluate": true,
+                                            "to": [
+                                                "paymentResponse",
+                                                "errors",
+                                                "message"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "if ( $gloopOutput.captureOutput.success )\n\t$gloopOutput.captureOutput.message",
+                                            "evaluate": true,
+                                            "to": [
+                                                "paymentResponse",
+                                                "message"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "fork",
+                                    "expression": "org.apache.commons.lang3.StringUtils.isEmpty( paymentResponse?.errors?.message )",
+                                    "children": [
+                                        {
+                                            "type": "invokeCode",
+                                            "label": "true",
+                                            "className": "io.toro.martini.GroovyMethods",
+                                            "methodName": "savePackageProperty",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "type": "set",
+                                                    "expression": "fake.last.authorised.amount",
+                                                    "to": [
+                                                        "key"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "0",
+                                                    "to": [
+                                                        "value"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "className": "io.toro.martini.LoggerMethods",
+                                    "methodName": "info",
+                                    "parameters": [
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "type": "set",
+                                            "expression": "aaaaaaa",
+                                            "to": [
+                                                "message"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

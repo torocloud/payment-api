@@ -1,0 +1,74 @@
+{
+    "info": {
+        "version": "1.0-SNAPSHOT"
+    },
+    "basePath": "/payments",
+    "paths": {
+        "/process": {
+            "post": {
+                "description": "This is the exposed service via Gloop API. All request will be sent here.",
+                "bodyParameter": {
+                    "name": "paymentRequest"
+                },
+                "responses": {
+                    "200": {
+                        "body": "paymentResponse",
+                        "description": "OK"
+                    },
+                    "400": {
+                        "body": "paymentResponse",
+                        "description": "An error populated paymentResponse when it failed the mod10 check validation."
+                    },
+                    "500": {
+                        "body": "paymentResponse",
+                        "description": "An error populated paymentResponse that contains information about the server error, or the exception encountered"
+                    }
+                },
+                "operationType": "gloop",
+                "operationLocation": "io.toro.payment.api.services.ProcessPayment",
+                "responseCodeField": "responseCode"
+            }
+        },
+        "/gateways/{gateway}": {
+            "get": {
+                "parameters": [
+                    {
+                        "name": "gateway",
+                        "type": "PATH"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "body": "requestTypes",
+                        "description": "Get All Supported Request Types"
+                    },
+                    "500": {
+                        "body": "APIException",
+                        "description": "Details about the error thrown by the API"
+                    }
+                },
+                "operationType": "gloop",
+                "operationLocation": "io.toro.payment.api.services.GetSupportedRequestType",
+                "responseCodeField": "responseCode"
+            }
+        },
+        "/gateways": {
+            "get": {
+                "description": "Get all the payment gateways installed in your TORO Integrate instance.",
+                "responses": {
+                    "200": {
+                        "body": "gateways",
+                        "description": "Returns a string array of the payment gateways installed."
+                    },
+                    "500": {
+                        "body": "APIException",
+                        "description": "The response payload when the service encounters an exception"
+                    }
+                },
+                "operationType": "gloop",
+                "operationLocation": "io.toro.payment.api.services.GetPaymentGateways",
+                "responseCodeField": "responseCode"
+            }
+        }
+    }
+}

@@ -1,0 +1,11 @@
+<esb-package context-path="/payment-api-braintree" id="1.0.11" version="1.0.11" enabled="true" readOnly="false" autoStart="true">
+  <depends-on-packages>
+    <package-name>payment-api</package-name>
+  </depends-on-packages>
+  <startup-services/>
+  <shutdown-services/>
+  <jms-destinations/>
+  <spring-contexts/>
+  <endpoints/>
+  <solr-cores/>
+</esb-package>

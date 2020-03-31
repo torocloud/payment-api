@@ -1,0 +1,18 @@
+{
+  "output" : [ {
+    "name" : "APIResponse",
+    "type" : "model",
+    "reference" : "io.toro.payment.api.models.APIResponse"
+  } ],
+  "steps" : [ {
+    "lines" : [ {
+      "type" : "set",
+      "expression" : "Successfully initialized gateway!",
+      "to" : [ "APIResponse", "message" ]
+    }, {
+      "type" : "set",
+      "expression" : "SUCCESS",
+      "to" : [ "APIResponse", "result" ]
+    } ]
+  } ]
+}

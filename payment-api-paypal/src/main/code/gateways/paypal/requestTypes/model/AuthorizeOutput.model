@@ -1,0 +1,191 @@
+{
+    "name": "AuthorizeOutput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "id"
+        },
+        {
+            "name": "name"
+        },
+        {
+            "name": "intent"
+        },
+        {
+            "name": "purchase_units",
+            "type": "model",
+            "array": true,
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "reference_id"
+                },
+                {
+                    "name": "amount",
+                    "type": "model",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "currency_code"
+                        },
+                        {
+                            "name": "value"
+                        }
+                    ]
+                },
+                {
+                    "name": "payee",
+                    "type": "model",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "email_address"
+                        },
+                        {
+                            "name": "merchant_id"
+                        }
+                    ]
+                },
+                {
+                    "name": "soft_descriptor"
+                },
+                {
+                    "name": "payments",
+                    "type": "model",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "authorizations",
+                            "type": "model",
+                            "array": true,
+                            "allowExtraProperties": true,
+                            "gloopProperties": [
+                                {
+                                    "name": "status"
+                                },
+                                {
+                                    "name": "id"
+                                },
+                                {
+                                    "name": "amount",
+                                    "type": "model",
+                                    "allowExtraProperties": true,
+                                    "gloopProperties": [
+                                        {
+                                            "name": "currency_code"
+                                        },
+                                        {
+                                            "name": "value"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "seller_protection",
+                                    "type": "model",
+                                    "allowExtraProperties": true,
+                                    "gloopProperties": [
+                                        {
+                                            "name": "status"
+                                        },
+                                        {
+                                            "name": "dispute_categories",
+                                            "array": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "processor_response",
+                                    "type": "model",
+                                    "allowExtraProperties": true,
+                                    "gloopProperties": [
+                                        {
+                                            "name": "avs_code"
+                                        },
+                                        {
+                                            "name": "cvv_code"
+                                        },
+                                        {
+                                            "name": "response_code"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "expiration_time"
+                                },
+                                {
+                                    "name": "links",
+                                    "type": "model",
+                                    "array": true,
+                                    "allowExtraProperties": true,
+                                    "gloopProperties": [
+                                        {
+                                            "name": "href"
+                                        },
+                                        {
+                                            "name": "rel"
+                                        },
+                                        {
+                                            "name": "method"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "create_time"
+                                },
+                                {
+                                    "name": "update_time"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "create_time"
+        },
+        {
+            "name": "update_time"
+        },
+        {
+            "name": "links",
+            "type": "model",
+            "array": true,
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "href"
+                },
+                {
+                    "name": "rel"
+                },
+                {
+                    "name": "method"
+                }
+            ]
+        },
+        {
+            "name": "status"
+        },
+        {
+            "name": "details",
+            "type": "model",
+            "array": true,
+            "gloopProperties": [
+                {
+                    "name": "issue"
+                },
+                {
+                    "name": "description"
+                }
+            ]
+        },
+        {
+            "name": "error"
+        },
+        {
+            "name": "error_description"
+        }
+    ]
+}

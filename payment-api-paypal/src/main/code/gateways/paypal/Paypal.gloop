@@ -1,0 +1,997 @@
+{
+    "comments": "Implemented request types:\n- Authorise\n- Capture\n- Cancel\n- Refund\n\nWebsite: https://www.paypal.com/ph/home\nAPI Documentation page: https://developer.paypal.com/docs/api/overview/",
+    "input": [
+        {
+            "name": "paymentRequest",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentRequest"
+        }
+    ],
+    "output": [
+        {
+            "name": "paymentResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentResponse",
+            "allowExtraProperties": true
+        }
+    ],
+    "steps": [
+        {
+            "type": "invokeCode",
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "formattedAmount"
+                        }
+                    ]
+                }
+            ],
+            "className": "io.toro.martini.NumberMethods",
+            "methodName": "format",
+            "parameters": [
+                "java.lang.Double",
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "paymentRequest",
+                        "paymentAmount",
+                        "value"
+                    ],
+                    "to": [
+                        "input"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "0.00",
+                    "to": [
+                        "format"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "output"
+                    ],
+                    "to": [
+                        "formattedAmount"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "accessTokenValid",
+                                    "type": "boolean"
+                                },
+                                {
+                                    "name": "paypalUrl"
+                                },
+                                {
+                                    "name": "apiVersion"
+                                }
+                            ]
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "long tokenExpiresIn = 'paypal.token.expiresIn'.getPackageProperty().toLong()\nlong lastAuthDate = ( long ) 'paypal.last.authorized.date'.getPackageProperty().toLong()\nlong currentDate = new Date().time\nint timeElapsedInSeconds = ( ( currentDate - lastAuthDate ) / 1000 )\n\nprintln \"=========Access Token Details=========\"\nprintln \"Time elapsed in seconds: ${timeElapsedInSeconds}\"\nprintln \"Token validity in seconds: ${tokenExpiresIn}\"\n//println \"Time elapsed in second still less than token expires in: ${( timeElapsedInSeconds < tokenExpiresIn )}\"\n//println \"Time remaining in seconds is greater than 1500: ${( tokenExpiresIn - timeElapsedInSeconds ) > 1500}\"\n//println \"Time remaining difference (expiresIn - elapsed): ${( tokenExpiresIn - timeElapsedInSeconds )}\"\n\n\n( timeElapsedInSeconds < tokenExpiresIn ) && ( tokenExpiresIn - timeElapsedInSeconds ) > 1500",
+                            "evaluate": true,
+                            "to": [
+                                "accessTokenValid"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "'paypal.url'.getPackageProperty()",
+                            "evaluate": true,
+                            "to": [
+                                "paypalUrl"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "'paypal.apiVersion'.getPackageProperty()",
+                            "evaluate": true,
+                            "to": [
+                                "apiVersion"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "expression": "paypalUrl != null",
+                    "children": [
+                        {
+                            "type": "block",
+                            "label": "true",
+                            "children": [
+                                {
+                                    "type": "fork",
+                                    "expression": "accessTokenValid",
+                                    "children": [
+                                        {
+                                            "type": "block",
+                                            "label": "false",
+                                            "children": [
+                                                {
+                                                    "type": "invokeGloop",
+                                                    "name": "gateways.paypal.util.PaypalAccessTokenGenerator",
+                                                    "inputs": [
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "'paypal.clientId'.getPackageProperty( '' )",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "authorisation",
+                                                                "username"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "'paypal.secret'.getPackageProperty( '' )",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "authorisation",
+                                                                "password"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "\"${paypalUrl}/v1/oauth2/token\"",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "url"
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "fork",
+                                    "expression": "paymentRequest.requestType",
+                                    "children": [
+                                        {
+                                            "type": "block",
+                                            "label": "authorise",
+                                            "children": [
+                                                {
+                                                    "type": "invokeGloop",
+                                                    "name": "gateways.paypal.requestTypes.Authorize",
+                                                    "declare": [
+                                                        {
+                                                            "variables": [
+                                                                {
+                                                                    "name": "authIds",
+                                                                    "array": true
+                                                                },
+                                                                {
+                                                                    "name": "authorizeOutput",
+                                                                    "type": "model",
+                                                                    "reference": "gateways.paypal.requestTypes.model.AuthorizeOutput",
+                                                                    "allowExtraProperties": true
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "inputs": [
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "orderId"
+                                                            ],
+                                                            "to": [
+                                                                "orderId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "trackerId"
+                                                            ],
+                                                            "to": [
+                                                                "Paypal_Request_Id"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "billingAddress",
+                                                                "line1"
+                                                            ],
+                                                            "to": [
+                                                                "AuthorizeInput",
+                                                                "payment_source",
+                                                                "card",
+                                                                "billing_address",
+                                                                "address_line_1"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "billingAddress",
+                                                                "line2"
+                                                            ],
+                                                            "to": [
+                                                                "AuthorizeInput",
+                                                                "payment_source",
+                                                                "card",
+                                                                "billing_address",
+                                                                "address_line_2"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "billingAddress",
+                                                                "city"
+                                                            ],
+                                                            "to": [
+                                                                "AuthorizeInput",
+                                                                "payment_source",
+                                                                "card",
+                                                                "billing_address",
+                                                                "admin_area_2"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "billingAddress",
+                                                                "state"
+                                                            ],
+                                                            "to": [
+                                                                "AuthorizeInput",
+                                                                "payment_source",
+                                                                "card",
+                                                                "billing_address",
+                                                                "admin_area_1"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "billingAddress",
+                                                                "countryCode"
+                                                            ],
+                                                            "to": [
+                                                                "AuthorizeInput",
+                                                                "payment_source",
+                                                                "card",
+                                                                "billing_address",
+                                                                "country_code"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "billingAddress",
+                                                                "postalCode"
+                                                            ],
+                                                            "to": [
+                                                                "AuthorizeInput",
+                                                                "payment_source",
+                                                                "card",
+                                                                "billing_address",
+                                                                "postal_code"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "authorisation",
+                                                                "creditCard",
+                                                                "holderName"
+                                                            ],
+                                                            "to": [
+                                                                "AuthorizeInput",
+                                                                "payment_source",
+                                                                "card",
+                                                                "name"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "authorisation",
+                                                                "creditCard",
+                                                                "number"
+                                                            ],
+                                                            "to": [
+                                                                "AuthorizeInput",
+                                                                "payment_source",
+                                                                "card",
+                                                                "number"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "authorisation",
+                                                                "creditCard",
+                                                                "verificationValue"
+                                                            ],
+                                                            "to": [
+                                                                "AuthorizeInput",
+                                                                "payment_source",
+                                                                "card",
+                                                                "security_code"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "\"${paymentRequest.authorisation.creditCard.expiryYear}-${paymentRequest.authorisation.creditCard.expiryMonth}\"",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "AuthorizeInput",
+                                                                "payment_source",
+                                                                "card",
+                                                                "expiry"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "\"${paypalUrl}/${apiVersion}\" + '/checkout/orders/${orderId}/authorize'",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "url"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "outputs": [
+                                                        {
+                                                            "from": [
+                                                                "AuthorizeOutput"
+                                                            ],
+                                                            "to": [
+                                                                "authorizeOutput"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "invokeGloop",
+                                                    "name": "gateways.paypal.util.ErrorMessageMapper",
+                                                    "inputs": [
+                                                        {
+                                                            "from": [
+                                                                "authorizeOutput",
+                                                                "details"
+                                                            ],
+                                                            "to": [
+                                                                "details"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "authorizeOutput",
+                                                                "error_description"
+                                                            ],
+                                                            "to": [
+                                                                "error_message"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "outputs": [
+                                                        {
+                                                            "from": [
+                                                                "mappedError"
+                                                            ],
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "errors",
+                                                                "message"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "fork",
+                                                    "expression": "authorizeOutput.purchase_units.size() > 0",
+                                                    "children": [
+                                                        {
+                                                            "type": "iterate",
+                                                            "label": "true",
+                                                            "input": {
+                                                                "path": [
+                                                                    "authorizeOutput",
+                                                                    "purchase_units"
+                                                                ]
+                                                            },
+                                                            "children": [
+                                                                {
+                                                                    "type": "fork",
+                                                                    "expression": "authorizeOutput.purchase_units.payments.authorizations.size() > 0",
+                                                                    "children": [
+                                                                        {
+                                                                            "type": "iterate",
+                                                                            "label": "true",
+                                                                            "input": {
+                                                                                "path": [
+                                                                                    "authorizeOutput",
+                                                                                    "purchase_units",
+                                                                                    "payments",
+                                                                                    "authorizations"
+                                                                                ]
+                                                                            },
+                                                                            "children": [
+                                                                                {
+                                                                                    "type": "fork",
+                                                                                    "expression": "authorizeOutput.purchase_units.payments.authorizations.status.equalsIgnoreCase( 'created' )",
+                                                                                    "children": [
+                                                                                        {
+                                                                                            "type": "invokeCode",
+                                                                                            "label": "true",
+                                                                                            "className": "io.toro.martini.ArrayMethods",
+                                                                                            "methodName": "addToList",
+                                                                                            "parameters": [
+                                                                                                "java.lang.Object",
+                                                                                                "java.lang.Object"
+                                                                                            ],
+                                                                                            "inputs": [
+                                                                                                {
+                                                                                                    "from": [
+                                                                                                        "authIds"
+                                                                                                    ],
+                                                                                                    "to": [
+                                                                                                        "list"
+                                                                                                    ]
+                                                                                                },
+                                                                                                {
+                                                                                                    "from": [
+                                                                                                        "authorizeOutput",
+                                                                                                        "purchase_units",
+                                                                                                        "payments",
+                                                                                                        "authorizations",
+                                                                                                        "id"
+                                                                                                    ],
+                                                                                                    "to": [
+                                                                                                        "element"
+                                                                                                    ]
+                                                                                                }
+                                                                                            ]
+                                                                                        }
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "lines": [
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "paymentResponse?.errors?.message != null ? 'Transaction failed' : 'Transaction successfully completed'",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "message"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "Paypal",
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "paymentGatewayId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "authIds.size() > 0 ? authIds?.join( ',' ) : null",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "serverTransactionReference"
+                                                            ],
+                                                            "priority": 1
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "invokeCode",
+                                                    "className": "io.toro.martini.TrackerMethods",
+                                                    "methodName": "addDocumentState",
+                                                    "parameters": [
+                                                        "java.lang.String",
+                                                        "java.lang.String",
+                                                        "java.lang.String"
+                                                    ],
+                                                    "inputs": [
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "trackerId"
+                                                            ],
+                                                            "to": [
+                                                                "internalId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "Gateway responded",
+                                                            "to": [
+                                                                "stateName"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "authorizeOutput.asJson()",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "content"
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "block",
+                                            "label": "capture",
+                                            "children": [
+                                                {
+                                                    "type": "invokeGloop",
+                                                    "name": "gateways.paypal.requestTypes.Capture",
+                                                    "declare": [
+                                                        {
+                                                            "variables": [
+                                                                {
+                                                                    "name": "captureOutput",
+                                                                    "type": "model",
+                                                                    "reference": "gateways.paypal.requestTypes.model.CaptureOutput",
+                                                                    "allowExtraProperties": true
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "inputs": [
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "trackerId"
+                                                            ],
+                                                            "to": [
+                                                                "trackerId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "capture",
+                                                                "serverTransactionReference"
+                                                            ],
+                                                            "to": [
+                                                                "authorizationId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "paymentAmount",
+                                                                "currencyCode"
+                                                            ],
+                                                            "to": [
+                                                                "CaptureInput",
+                                                                "amount",
+                                                                "currency_code"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "formattedAmount"
+                                                            ],
+                                                            "to": [
+                                                                "CaptureInput",
+                                                                "amount",
+                                                                "value"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "\"${paypalUrl}/${apiVersion}\" + '/payments/authorizations/${authorizationId}/capture'",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "url"
+                                                            ],
+                                                            "priority": 1
+                                                        }
+                                                    ],
+                                                    "outputs": [
+                                                        {
+                                                            "from": [
+                                                                "CaptureOutput"
+                                                            ],
+                                                            "to": [
+                                                                "captureOutput"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "invokeGloop",
+                                                    "name": "gateways.paypal.util.ErrorMessageMapper",
+                                                    "inputs": [
+                                                        {
+                                                            "from": [
+                                                                "captureOutput",
+                                                                "error_description"
+                                                            ],
+                                                            "to": [
+                                                                "error_message"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "captureOutput",
+                                                                "details"
+                                                            ],
+                                                            "to": [
+                                                                "details"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "outputs": [
+                                                        {
+                                                            "from": [
+                                                                "mappedError"
+                                                            ],
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "errors",
+                                                                "message"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "Paypal",
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "paymentGatewayId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "captureOutput?.id",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "serverTransactionReference"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "paymentResponse?.errors?.message ? 'Transaction failed' : 'Transcaction successfully completed'",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "message"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "invokeCode",
+                                                    "className": "io.toro.martini.TrackerMethods",
+                                                    "methodName": "addDocumentState",
+                                                    "parameters": [
+                                                        "java.lang.String",
+                                                        "java.lang.String",
+                                                        "java.lang.String"
+                                                    ],
+                                                    "inputs": [
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "trackerId"
+                                                            ],
+                                                            "to": [
+                                                                "internalId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "Gateway responded",
+                                                            "to": [
+                                                                "stateName"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "captureOutput.asJson()",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "content"
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "block",
+                                            "label": "refund",
+                                            "children": [
+                                                {
+                                                    "type": "invokeGloop",
+                                                    "name": "gateways.paypal.requestTypes.Refund",
+                                                    "declare": [
+                                                        {
+                                                            "variables": [
+                                                                {
+                                                                    "name": "refundOutput",
+                                                                    "type": "model",
+                                                                    "reference": "gateways.paypal.requestTypes.model.RefundOutput",
+                                                                    "allowExtraProperties": true
+                                                                }
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "inputs": [
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "refund",
+                                                                "serverTransactionReference"
+                                                            ],
+                                                            "to": [
+                                                                "captureId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "trackerId"
+                                                            ],
+                                                            "to": [
+                                                                "trackerId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "formattedAmount"
+                                                            ],
+                                                            "to": [
+                                                                "RefundInput",
+                                                                "amount",
+                                                                "total"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "paymentAmount",
+                                                                "currencyCode"
+                                                            ],
+                                                            "to": [
+                                                                "RefundInput",
+                                                                "amount",
+                                                                "currency"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "\"${paypalUrl}\" + '/v1/payments/capture/${captureId}/refund'",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "url"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "outputs": [
+                                                        {
+                                                            "from": [
+                                                                "RefundOutput"
+                                                            ],
+                                                            "to": [
+                                                                "refundOutput"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "invokeGloop",
+                                                    "name": "gateways.paypal.util.ErrorMessageMapper",
+                                                    "inputs": [
+                                                        {
+                                                            "from": [
+                                                                "refundOutput",
+                                                                "message"
+                                                            ],
+                                                            "to": [
+                                                                "error_message"
+                                                            ]
+                                                        }
+                                                    ],
+                                                    "outputs": [
+                                                        {
+                                                            "from": [
+                                                                "mappedError"
+                                                            ],
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "errors",
+                                                                "message"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "paymentResponse?.errors?.message ? 'Transaction failed' : 'Transcaction successfully completed'",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "message"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "refundOutput.id",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "serverTransactionReference"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "Paypal",
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "paymentGatewayId"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "invokeCode",
+                                                    "className": "io.toro.martini.TrackerMethods",
+                                                    "methodName": "addDocumentState",
+                                                    "parameters": [
+                                                        "java.lang.String",
+                                                        "java.lang.String",
+                                                        "java.lang.String"
+                                                    ],
+                                                    "inputs": [
+                                                        {
+                                                            "from": [
+                                                                "paymentRequest",
+                                                                "trackerId"
+                                                            ],
+                                                            "to": [
+                                                                "internalId"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "Gateway responded",
+                                                            "to": [
+                                                                "stateName"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "refundOutput.asJson()",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "content"
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "label": "false",
+                            "lines": [
+                                {
+                                    "type": "set",
+                                    "expression": "Oops! It looks like you didn't setup the gateway. Run the Setup service to fix this error.",
+                                    "to": [
+                                        "paymentResponse",
+                                        "errors",
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "name": "io.toro.payment.api.responses.Error",
+                    "inputs": [
+                        {
+                            "from": [
+                                "paymentRequest"
+                            ],
+                            "to": [
+                                "paymentRequest"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "paymentResponse"
+                            ],
+                            "to": [
+                                "paymentResponse"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "lines": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "paymentResponse",
+                                "errors",
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

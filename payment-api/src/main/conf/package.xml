@@ -1,0 +1,5 @@
+<package stateOnStartup="unloaded" id="payment-api" version="1.0.14" context-path="/payment-api">
+  <package-dependencies/>
+  <startup-services/>
+  <shutdown-services/>
+</package>

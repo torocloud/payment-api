@@ -1,0 +1,30 @@
+<!-- generally this file doesn't need changing -->
+<assembly>
+    <id>bin</id>
+    <formats>
+        <format>dir</format>
+        <format>zip</format>
+    </formats>
+    <fileSets>
+        <fileSet>
+            <directory>src/main/code</directory>
+            <outputDirectory>code</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/conf</directory>
+            <outputDirectory>conf</outputDirectory>
+            <excludes>
+                <exclude>GroovyCompilerConfig.groovy</exclude>
+            </excludes>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/jars</directory>
+            <outputDirectory>lib</outputDirectory>
+        </fileSet>
+        <!--FIXME: Remove classes; compile scripts at start time-->
+        <fileSet>
+            <directory>target/code</directory>
+            <outputDirectory>code</outputDirectory>
+        </fileSet>
+    </fileSets>
+</assembly>

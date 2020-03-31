@@ -1,0 +1,172 @@
+{
+    "input": [
+        {
+            "name": "url"
+        },
+        {
+            "name": "loginId"
+        },
+        {
+            "name": "transactionKey"
+        }
+    ],
+    "output": [
+        {
+            "name": "APIResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.APIResponse"
+        }
+    ],
+    "paths": [
+        "/payments/authorizenet"
+    ],
+    "methods": [
+        "POST"
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "url"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "authorizenet.url",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackagePropertyComment",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "type": "set",
+                            "expression": "authorizenet.url",
+                            "to": [
+                                "key"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "AuthorizeNet",
+                            "to": [
+                                "comment"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "loginId"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "authorizenet.loginId",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "transactionKey"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "authorizenet.transactionKey",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "name": "io.toro.payment.api.responses.SuccessfullyInitializedGateway",
+                    "outputs": [
+                        {
+                            "from": [
+                                "APIResponse"
+                            ],
+                            "to": [
+                                "APIResponse"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

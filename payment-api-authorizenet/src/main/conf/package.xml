@@ -1,0 +1,12 @@
+<package stateOnStartup="loaded" id="payment-api-authorizenet" version="1.0.14" context-path="/payment-api-authorizenet">
+  <package-dependencies>
+    <package-dependency>
+      <name>payment-api</name>
+      <id>payment-api</id>
+      <version>1.0.14</version>
+      <required-state-on-start>loaded</required-state-on-start>
+    </package-dependency>
+  </package-dependencies>
+  <startup-services/>
+  <shutdown-services/>
+</package>

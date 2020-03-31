@@ -1,0 +1,193 @@
+{
+    "input": [
+        {
+            "name": "paymentRequest",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentRequest"
+        }
+    ],
+    "output": [
+        {
+            "name": "paymentResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentResponse"
+        }
+    ],
+    "steps": [
+        {
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "gatewayPackage"
+                        },
+                        {
+                            "name": "namespace"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "fork",
+            "expression": "paymentRequest.paymentGatewayId",
+            "children": [
+                {
+                    "label": "Adyen",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "gateways.adyen.Adyen",
+                            "to": [
+                                "namespace"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "payment-api-adyen",
+                            "to": [
+                                "gatewayPackage"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "AuthorizeNet",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "gateways.authorizenet.AuthorizeNet",
+                            "to": [
+                                "namespace"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "payment-api-authorizenet",
+                            "to": [
+                                "gatewayPackage"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "Fake",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "payment-api",
+                            "to": [
+                                "gatewayPackage"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "io.toro.payment.api.gateways.fake.FakePaymentGateway",
+                            "to": [
+                                "namespace"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "Braintree",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "gateways.braintree.Braintree",
+                            "to": [
+                                "namespace"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "payment-api-braintree",
+                            "to": [
+                                "gatewayPackage"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "Paypal",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "payment-api-paypal",
+                            "to": [
+                                "gatewayPackage"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "gateways.paypal.Paypal",
+                            "to": [
+                                "namespace"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "Stripe",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "gateways.stripe.Stripe",
+                            "to": [
+                                "namespace"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "payment-api-stripe",
+                            "to": [
+                                "gatewayPackage"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.payment.api.utils.groovy.PackageContext",
+            "methodName": "setPackageContext",
+            "parameters": [
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "gatewayPackage"
+                    ],
+                    "to": [
+                        "packageName"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "gloovy",
+            "comments": "Invokes a payment gateway service via .gloop one-liner, and wraps the gateways response to paymentResponse Gloop model",
+            "gloovyScript": "import io.toro.gloop.object.property.GloopModel\n\nGloopModel output = \"${namespace}\".gloop( paymentRequest )\n\npaymentResponse = output?.getGloopProperties()?.get(0)"
+        },
+        {
+            "type": "invokeCode",
+            "comments": "Puts back the payment-api package as the current package context",
+            "className": "io.toro.payment.api.utils.groovy.PackageContext",
+            "methodName": "setPackageContext",
+            "parameters": [
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "type": "set",
+                    "expression": "payment-api",
+                    "to": [
+                        "packageName"
+                    ]
+                }
+            ]
+        }
+    ]
+}

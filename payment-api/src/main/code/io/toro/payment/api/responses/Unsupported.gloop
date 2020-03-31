@@ -1,0 +1,15 @@
+{
+  "comments" : "This service is used if a payment gateway doesn't support a request type.",
+  "output" : [ {
+    "name" : "paymentResponse",
+    "type" : "model",
+    "reference" : "io.toro.payment.api.models.PaymentResponse"
+  } ],
+  "steps" : [ {
+    "lines" : [ {
+      "type" : "set",
+      "expression" : "Unsupported Request Type",
+      "to" : [ "paymentResponse", "message" ]
+    } ]
+  } ]
+}

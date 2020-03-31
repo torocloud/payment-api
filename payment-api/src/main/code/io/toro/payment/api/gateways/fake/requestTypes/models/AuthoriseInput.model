@@ -1,0 +1,61 @@
+{
+    "name": "AuthoriseInput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "orderType"
+        },
+        {
+            "name": "amount",
+            "type": "bigDecimal"
+        },
+        {
+            "name": "authorizeOnly",
+            "type": "boolean"
+        },
+        {
+            "name": "currencyCode"
+        },
+        {
+            "name": "orderDescription"
+        },
+        {
+            "name": "name"
+        },
+        {
+            "name": "billingAddress",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "address1"
+                },
+                {
+                    "name": "postalCode"
+                },
+                {
+                    "name": "city"
+                },
+                {
+                    "name": "countryCode"
+                }
+            ]
+        },
+        {
+            "name": "card",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "cardNumber"
+                },
+                {
+                    "name": "expirationDate"
+                },
+                {
+                    "name": "code"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,327 @@
+{
+    "input": [
+        {
+            "name": "captureInput",
+            "type": "model",
+            "reference": "io.toro.payment.api.gateways.fake.requestTypes.models.CaptureInput"
+        }
+    ],
+    "output": [
+        {
+            "name": "captureOutput",
+            "type": "model",
+            "reference": "io.toro.payment.api.gateways.fake.requestTypes.models.CaptureOutput"
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "lastTransactionId"
+                                },
+                                {
+                                    "name": "currentBalance",
+                                    "type": "bigDecimal"
+                                },
+                                {
+                                    "name": "availableAuthorizedAmount",
+                                    "type": "bigDecimal"
+                                }
+                            ]
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "'fake.card.balance'.getPackageProperty()",
+                            "evaluate": true,
+                            "to": [
+                                "currentBalance"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "'fake.last.transactionId'.getPackageProperty()",
+                            "evaluate": true,
+                            "to": [
+                                "lastTransactionId"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "'fake.last.authorised.amount'.getPackageProperty()",
+                            "evaluate": true,
+                            "to": [
+                                "availableAuthorizedAmount"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "expression": "!org.apache.commons.lang3.StringUtils.isEmpty( lastTransactionId )",
+                    "children": [
+                        {
+                            "type": "fork",
+                            "label": "true",
+                            "expression": "captureInput.transactionId.equals( lastTransactionId )",
+                            "children": [
+                                {
+                                    "type": "fork",
+                                    "label": "true",
+                                    "expression": "availableAuthorizedAmount > 0",
+                                    "children": [
+                                        {
+                                            "type": "fork",
+                                            "label": "true",
+                                            "expression": "currentBalance > captureInput.amount",
+                                            "children": [
+                                                {
+                                                    "type": "fork",
+                                                    "label": "true",
+                                                    "expression": "captureInput.amount <= availableAuthorizedAmount",
+                                                    "children": [
+                                                        {
+                                                            "type": "block",
+                                                            "label": "true",
+                                                            "children": [
+                                                                {
+                                                                    "type": "invokeCode",
+                                                                    "className": "io.toro.martini.GroovyMethods",
+                                                                    "methodName": "savePackageProperty",
+                                                                    "parameters": [
+                                                                        "java.lang.String",
+                                                                        "java.lang.String"
+                                                                    ],
+                                                                    "inputs": [
+                                                                        {
+                                                                            "type": "set",
+                                                                            "expression": "acme.card.balance",
+                                                                            "to": [
+                                                                                "key"
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "type": "set",
+                                                                            "expression": "currentBalance - captureInput.amount",
+                                                                            "evaluate": true,
+                                                                            "to": [
+                                                                                "value"
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "lines": [
+                                                                        {
+                                                                            "type": "set",
+                                                                            "expression": "true",
+                                                                            "to": [
+                                                                                "captureOutput",
+                                                                                "success"
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "type": "set",
+                                                                            "expression": "captureInput.amount",
+                                                                            "evaluate": true,
+                                                                            "to": [
+                                                                                "captureOutput",
+                                                                                "authorizedAmount"
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "type": "set",
+                                                                            "expression": "Authorised amount successfully captured",
+                                                                            "to": [
+                                                                                "captureOutput",
+                                                                                "message"
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "label": "false",
+                                                            "lines": [
+                                                                {
+                                                                    "type": "set",
+                                                                    "expression": "false",
+                                                                    "to": [
+                                                                        "captureOutput",
+                                                                        "success"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "set",
+                                                                    "expression": "Unable to capture amount. Cannot capture amount greater than the authorised amount.",
+                                                                    "to": [
+                                                                        "captureOutput",
+                                                                        "message"
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "label": "false",
+                                                    "lines": [
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "false",
+                                                            "to": [
+                                                                "captureOutput",
+                                                                "success"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "Unable to capture amount. Not enough balance in account",
+                                                            "to": [
+                                                                "captureOutput",
+                                                                "message"
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "block",
+                                            "label": "false",
+                                            "children": [
+                                                {
+                                                    "type": "invokeCode",
+                                                    "className": "io.toro.martini.LoggerMethods",
+                                                    "methodName": "println",
+                                                    "parameters": [
+                                                        "java.lang.String"
+                                                    ],
+                                                    "inputs": [
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "\"${availableAuthorizedAmount}\"",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "message"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "lines": [
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "false",
+                                                            "to": [
+                                                                "captureOutput",
+                                                                "success"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "Nothing to capture.",
+                                                            "to": [
+                                                                "captureOutput",
+                                                                "message"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "break",
+                                                    "expression": "$gloopService"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "label": "false",
+                                    "lines": [
+                                        {
+                                            "type": "set",
+                                            "expression": "false",
+                                            "to": [
+                                                "captureOutput",
+                                                "success"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "The transaction id does not match. Capture failed",
+                                            "to": [
+                                                "captureOutput",
+                                                "message"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "label": "false",
+                            "lines": [
+                                {
+                                    "type": "set",
+                                    "expression": "false",
+                                    "to": [
+                                        "captureOutput",
+                                        "success"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "The transaction id does not match. Capture failed",
+                                    "to": [
+                                        "captureOutput",
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

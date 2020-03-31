@@ -1,0 +1,71 @@
+{
+    "input": [
+        {
+            "name": "token"
+        }
+    ],
+    "output": [
+        {
+            "name": "maskedToken"
+        }
+    ],
+    "steps": [
+        {
+            "type": "invokeCode",
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "output",
+                            "type": "integer"
+                        }
+                    ]
+                }
+            ],
+            "className": "io.toro.martini.StringMethods",
+            "methodName": "length",
+            "parameters": [
+                "java.lang.CharSequence"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "token"
+                    ],
+                    "to": [
+                        "cs"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "output"
+                    ],
+                    "to": [
+                        "output"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "while",
+            "expression": "output",
+            "evaluate": true,
+            "children": [
+                {
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "if(maskedToken != null) {\n\tmaskedToken += \"x\"\n} else {\n\tmaskedToken = \"x\"\n}",
+                            "evaluate": true,
+                            "to": [
+                                "maskedToken"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

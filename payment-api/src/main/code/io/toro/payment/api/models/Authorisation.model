@@ -1,0 +1,26 @@
+{
+    "name": "Authorisation",
+    "type": "model",
+    "gloopProperties": [
+        {
+            "name": "storeInstanceName",
+            "minLength": 1,
+            "maxLength": 80
+        },
+        {
+            "name": "sessionIdToken",
+            "minLength": 10,
+            "maxLength": 255
+        },
+        {
+            "name": "browserIPAddress",
+            "minLength": 7,
+            "maxLength": 30
+        },
+        {
+            "name": "creditCard",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.CreditCard"
+        }
+    ]
+}

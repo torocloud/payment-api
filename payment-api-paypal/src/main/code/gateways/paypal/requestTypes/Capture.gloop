@@ -1,0 +1,197 @@
+{
+    "input": [
+        {
+            "name": "url",
+            "defaultValue": "https://api.sandbox.paypal.com/v2/payments/authorizations/${authorizationId}/capture"
+        },
+        {
+            "name": "authorizationId",
+            "defaultValue": ""
+        },
+        {
+            "name": "CaptureInput",
+            "type": "model",
+            "reference": "gateways.paypal.requestTypes.model.CaptureInput"
+        },
+        {
+            "name": "trackerId"
+        }
+    ],
+    "output": [
+        {
+            "name": "CaptureOutput",
+            "type": "model",
+            "reference": "gateways.paypal.requestTypes.model.CaptureOutput",
+            "allowExtraProperties": true
+        }
+    ],
+    "steps": [
+        {
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "queryStringParameters",
+                            "type": "model"
+                        }
+                    ]
+                },
+                {
+                    "variables": [
+                        {
+                            "name": "headers",
+                            "type": "model",
+                            "array": true,
+                            "reference": "io.toro.martini.http.Header"
+                        }
+                    ]
+                }
+            ],
+            "lines": [
+                {
+                    "type": "set",
+                    "expression": "header {\n\tname 'Content-Type'\n\tvalue 'application/json'\n}\nheader {\n\tname 'Authorization'\n\tvalue \"Bearer ${'paypal.accessToken'.getPackageProperty( '' )}\"\n}\nheader {\n\tname 'Prefer'\n\tvalue 'return=representation'\n}\n",
+                    "evaluate": true,
+                    "to": [
+                        "headers"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.TrackerMethods",
+            "methodName": "addDocumentState",
+            "parameters": [
+                "java.lang.String",
+                "java.lang.String",
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "trackerId"
+                    ],
+                    "to": [
+                        "internalId"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Sent to gateway",
+                    "to": [
+                        "stateName"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "CaptureInput.asJson()",
+                    "evaluate": true,
+                    "to": [
+                        "content"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.HttpMethods",
+            "methodName": "http",
+            "parameters": [
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.object.property.GloopModel",
+                "java.lang.String",
+                "java.lang.String",
+                "boolean",
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.engine.GloopExecutionContext"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "queryStringParameters"
+                    ],
+                    "to": [
+                        "request",
+                        "parameters"
+                    ]
+                },
+                {
+                    "from": [
+                        "headers"
+                    ],
+                    "to": [
+                        "request",
+                        "headers"
+                    ]
+                },
+                {
+                    "from": [
+                        "CaptureInput"
+                    ],
+                    "to": [
+                        "request",
+                        "body"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "GloopObject",
+                    "to": [
+                        "returnAs"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Auto Detect",
+                    "to": [
+                        "responseType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "application/json",
+                    "to": [
+                        "request",
+                        "contentType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "evalStringTemplate( url )",
+                    "evaluate": true,
+                    "to": [
+                        "request",
+                        "uri"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "POST",
+                    "to": [
+                        "request",
+                        "method"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "true",
+                    "to": [
+                        "throwHttpExceptions"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "response",
+                        "content"
+                    ],
+                    "to": [
+                        "CaptureOutput"
+                    ]
+                }
+            ]
+        }
+    ]
+}

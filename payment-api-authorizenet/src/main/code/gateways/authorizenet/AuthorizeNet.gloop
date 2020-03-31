@@ -1,0 +1,1136 @@
+{
+    "comments": "Implemented request types:\n- Authorise\n- Capture\n- Refund\n- Cancel\n- Tokenise\n\nWebsite: https://www.authorize.net\nAPI Documentation page: https://developer.authorize.net/api/reference/",
+    "input": [
+        {
+            "name": "paymentRequest",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentRequest"
+        }
+    ],
+    "output": [
+        {
+            "name": "paymentResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentResponse"
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "invokeCode",
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "packageProperty"
+                                }
+                            ]
+                        }
+                    ],
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "getPackageProperty",
+                    "parameters": [
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "type": "set",
+                            "expression": "authorizenet.url",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "output"
+                            ],
+                            "to": [
+                                "packageProperty"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "expression": "packageProperty != null",
+                    "children": [
+                        {
+                            "type": "fork",
+                            "label": "true",
+                            "comments": "What is the payment request type?",
+                            "expression": "paymentRequest.requestType",
+                            "children": [
+                                {
+                                    "type": "block",
+                                    "label": "authorise",
+                                    "children": [
+                                        {
+                                            "type": "invokeGloop",
+                                            "name": "gateways.authorizenet.requestTypes.Authorise",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "createTransactionResponse",
+                                                            "type": "model",
+                                                            "allowExtraProperties": true,
+                                                            "gloopProperties": [
+                                                                {
+                                                                    "name": "responseCode"
+                                                                },
+                                                                {
+                                                                    "name": "avsResultCode"
+                                                                },
+                                                                {
+                                                                    "name": "transId"
+                                                                },
+                                                                {
+                                                                    "name": "transHash"
+                                                                },
+                                                                {
+                                                                    "name": "transHashSha2"
+                                                                },
+                                                                {
+                                                                    "name": "testRequest"
+                                                                },
+                                                                {
+                                                                    "name": "accountNumber"
+                                                                },
+                                                                {
+                                                                    "name": "accountType"
+                                                                },
+                                                                {
+                                                                    "name": "errors",
+                                                                    "type": "model",
+                                                                    "gloopProperties": [
+                                                                        {
+                                                                            "name": "error",
+                                                                            "type": "model",
+                                                                            "gloopProperties": [
+                                                                                {
+                                                                                    "name": "errorCode"
+                                                                                },
+                                                                                {
+                                                                                    "name": "errorText"
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "paymentAmount",
+                                                        "value"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "amount"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "number"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "payment",
+                                                        "creditCard",
+                                                        "cardNumber"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "verificationValue"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "payment",
+                                                        "creditCard",
+                                                        "cardCode"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "refId"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "orderId"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "order",
+                                                        "invoiceNumber"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "firstName"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "billTo",
+                                                        "firstName"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "lastName"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "billTo",
+                                                        "lastName"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "companyName"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "billTo",
+                                                        "company"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "city"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "billTo",
+                                                        "city"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "state"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "billTo",
+                                                        "state"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "countryCode"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "billTo",
+                                                        "country"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "postalCode"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "billTo",
+                                                        "zip"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.transactionKey'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "merchantAuthentication",
+                                                        "transactionKey"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.loginId'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "merchantAuthentication",
+                                                        "name"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.authorisation.creditCard.expiryYear + \"-\" +\npaymentRequest.authorisation.creditCard.expiryMonth",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "payment",
+                                                        "creditCard",
+                                                        "expirationDate"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "authOnlyTransaction",
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "transactionType"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.url'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "url"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "\"${paymentRequest.billingAddress.line1}, ${paymentRequest.billingAddress.line2}\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "billTo",
+                                                        "address"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "AuthoriseOutput",
+                                                        "transactionResponse",
+                                                        "transId"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "AuthoriseOutput",
+                                                        "transactionResponse"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionResponse"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "AuthoriseOutput",
+                                                        "transactionResponse"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionResponse"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.paymentGatewayId",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "$gloopOutput.AuthoriseOutput.messages.message.text.equalsIgnoreCase( 'Successful.' ) ? 'authorised' : null",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentState"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "if( $gloopOutput.AuthoriseOutput.messages.message.text != \"Successful.\" )\n\tnull\nelse\n\t\"The transaction was ${$gloopOutput.AuthoriseOutput.messages.message.text.toLowerCase()}\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "def text = $gloopOutput.AuthoriseOutput.messages.message.text ?: ''\n\ndef messageText = !text.equalsIgnoreCase( 'Successful.' ) ? ' ' + text : ''\n\nif ( $gloopOutput.AuthoriseOutput.transactionResponse.errors.error.errorText != null )\n\t\"${$gloopOutput.AuthoriseOutput.transactionResponse.errors.error.errorText}${messageText}\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "createTransactionResponse.transHash ?: createTransactionResponse.transHashSha2",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReferenceHash"
+                                                    ],
+                                                    "priority": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "unload": [
+                                                [
+                                                    "createTransactionResponse"
+                                                ]
+                                            ],
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway responded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "createTransactionResponse.asXml()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "block",
+                                    "label": "capture",
+                                    "children": [
+                                        {
+                                            "type": "invokeGloop",
+                                            "name": "gateways.authorizenet.requestTypes.Capture",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "createTransactionResponse",
+                                                            "type": "model",
+                                                            "reference": "gateways.authorizenet.requestTypes.models.CaptureOutput",
+                                                            "allowExtraProperties": true
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "refId"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "paymentAmount",
+                                                        "value"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "amount"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "capture",
+                                                        "serverTransactionReference"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "refTransId"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "orderId"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "order",
+                                                        "invoiceNumber"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.url'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "url"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.loginId'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "merchantAuthentication",
+                                                        "name"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.transactionKey'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "merchantAuthentication",
+                                                        "transactionKey"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "priorAuthCaptureTransaction",
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "transactionType"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "CaptureOutput",
+                                                        "transactionResponse",
+                                                        "transId"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "CaptureOutput"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionResponse"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.paymentGatewayId",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "$gloopOutput.CaptureOutput.messages.message.text.equalsIgnoreCase( 'Successful.' ) ? 'captured' : null",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentState"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "if( $gloopOutput.CaptureOutput.messages.message.text != \"Successful.\" )\n\tnull\nelse\n\t\"The transaction was ${$gloopOutput.CaptureOutput.messages.message.text.toLowerCase()}\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ],
+                                                    "priority": 1
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "def text = $gloopOutput.CaptureOutput.messages.message.text ?: ''\n\ndef messageText = !text.equalsIgnoreCase( 'Successful.' ) ? ' ' + text : ''\n\nif ( $gloopOutput.CaptureOutput.transactionResponse.errors.error.errorText != null )\n\t\"${$gloopOutput.CaptureOutput.transactionResponse.errors.error.errorText}${messageText}\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "$gloopOutput.CaptureOutput.transactionResponse.transHash ?: $gloopOutput.CaptureOutput.transactionResponse.transHashSha2",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReferenceHash"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway responded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "createTransactionResponse.asXml()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "block",
+                                    "label": "refund",
+                                    "children": [
+                                        {
+                                            "type": "invokeGloop",
+                                            "name": "gateways.authorizenet.requestTypes.Refund",
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "refId"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "paymentAmount",
+                                                        "value"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "amount"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "refund",
+                                                        "serverTransactionReference"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "refTransId"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "number"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "payment",
+                                                        "creditCard",
+                                                        "cardNumber"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.url'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "url"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.loginId'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "merchantAuthentication",
+                                                        "name"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.transactionKey'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "merchantAuthentication",
+                                                        "transactionKey"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "refundTransaction",
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "transactionType"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.authorisation.creditCard.expiryYear + \"-\" +\npaymentRequest.authorisation.creditCard.expiryMonth",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "payment",
+                                                        "creditCard",
+                                                        "expirationDate"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "RefundOutput",
+                                                        "transactionResponse",
+                                                        "transId"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "RefundOutput",
+                                                        "transactionResponse",
+                                                        "transHashSha2"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReferenceHash"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentResponse.paymentGatewayId",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "$gloopOutput.RefundOutput.messages.message.text.equalsIgnoreCase( 'Successful.' ) ? 'refunded' : null",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentState"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "if( $gloopOutput.RefundOutput.messages.message.text != \"Successful.\" )\n\tnull\nelse\n\t\"The transaction was ${$gloopOutput.RefundOutput.messages.message.text.toLowerCase()}\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ],
+                                                    "priority": 1
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "def text = $gloopOutput.RefundOutput.messages.message.text ?: ''\n\ndef messageText = !text.equalsIgnoreCase( 'Successful.' ) ? ' ' + text : ''\n\nif ( $gloopOutput.RefundOutput.transactionResponse.errors.error.errorText != null )\n\t\"${$gloopOutput.RefundOutput.transactionResponse.errors.error.errorText}${messageText}\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "block",
+                                    "label": "cancel",
+                                    "children": [
+                                        {
+                                            "type": "invokeGloop",
+                                            "name": "gateways.authorizenet.requestTypes.Cancel",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "createTransactionResponse",
+                                                            "type": "model",
+                                                            "reference": "gateways.authorizenet.requestTypes.models.CancelOutput",
+                                                            "allowExtraProperties": true
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "refId"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "cancel",
+                                                        "serverTransactionReference"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "refTransId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.url'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "url"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.loginId'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "merchantAuthentication",
+                                                        "name"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'authorizenet.transactionKey'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "merchantAuthentication",
+                                                        "transactionKey"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "voidTransaction",
+                                                    "to": [
+                                                        "createTransactionRequest",
+                                                        "transactionRequest",
+                                                        "transactionType"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "CancelOutput",
+                                                        "transactionResponse",
+                                                        "transHash"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReferenceHash"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "CancelOutput",
+                                                        "transactionResponse",
+                                                        "transId"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "CancelOutput"
+                                                    ],
+                                                    "to": [
+                                                        "createTransactionResponse"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.paymentGatewayId",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "$gloopOutput.CancelOutput.messages.message.text.equalsIgnoreCase( 'Successful.' ) ? 'cancelled' : null",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentState"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "if( $gloopOutput.CancelOutput.messages.message.text != \"Successful.\" )\n\tnull\nelse\n\t\"The transaction was ${$gloopOutput.CancelOutput.messages.message.text.toLowerCase()}\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "def text = $gloopOutput.CancelOutput.messages.message.text ?: ''\n\ndef messageText = !text.equalsIgnoreCase( 'Successful.' ) ? ' ' + text : ''\n\nif ( $gloopOutput.CancelOutput.transactionResponse.errors.error.errorText != null )\n\t\"${$gloopOutput.CancelOutput.transactionResponse.errors.error.errorText}${messageText}\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "unload": [
+                                                [
+                                                    "createTransactionResponse"
+                                                ]
+                                            ],
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway responded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "createTransactionResponse.asXml()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeGloop",
+                                    "label": "tokenise",
+                                    "name": "io.toro.payment.api.responses.Unsupported",
+                                    "outputs": [
+                                        {
+                                            "from": [
+                                                "paymentResponse"
+                                            ],
+                                            "to": [
+                                                "paymentResponse"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "label": "false",
+                            "lines": [
+                                {
+                                    "type": "set",
+                                    "expression": "Oops! It looks like you dind't setup the gateway. Run the Setup service to fix this error.",
+                                    "to": [
+                                        "paymentResponse",
+                                        "errors",
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeGloop",
+                    "name": "io.toro.payment.api.responses.Error",
+                    "inputs": [
+                        {
+                            "from": [
+                                "paymentRequest"
+                            ],
+                            "to": [
+                                "paymentRequest"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "paymentResponse"
+                            ],
+                            "to": [
+                                "paymentResponse"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

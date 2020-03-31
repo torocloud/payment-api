@@ -1,0 +1,262 @@
+{
+    "input": [
+        {
+            "name": "authorisation",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "username",
+                    "defaultValue": "",
+                    "comments": "The username"
+                },
+                {
+                    "name": "password",
+                    "comments": "The password"
+                }
+            ]
+        },
+        {
+            "name": "url",
+            "defaultValue": "https://api.sandbox.paypal.com/v1/oauth2/token"
+        },
+        {
+            "name": "grant_type",
+            "defaultValue": "client_credentials"
+        }
+    ],
+    "output": [
+        {
+            "name": "PaypalAccessTokenGeneratorOutput",
+            "type": "model",
+            "reference": "gateways.paypal.util.model.PaypalAccessTokenGeneratorOutput"
+        }
+    ],
+    "steps": [
+        {
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "bodyParameters",
+                            "type": "model",
+                            "gloopProperties": [
+                                {
+                                    "name": "grant_type"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "variables": [
+                        {
+                            "name": "headers",
+                            "type": "model",
+                            "array": true,
+                            "reference": "io.toro.martini.http.Header"
+                        }
+                    ]
+                }
+            ],
+            "lines": [
+                {
+                    "from": [
+                        "grant_type"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "grant_type"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "header {\n\tname 'Content-Type'\n\tvalue 'application/x-www-form-urlencoded'\n}\n",
+                    "evaluate": true,
+                    "to": [
+                        "headers"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.HttpMethods",
+            "methodName": "http",
+            "parameters": [
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.object.property.GloopModel",
+                "java.lang.String",
+                "java.lang.String",
+                "boolean",
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.engine.GloopExecutionContext"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "authorisation"
+                    ],
+                    "to": [
+                        "auth",
+                        "basic"
+                    ]
+                },
+                {
+                    "from": [
+                        "bodyParameters"
+                    ],
+                    "to": [
+                        "request",
+                        "parameters"
+                    ]
+                },
+                {
+                    "from": [
+                        "headers"
+                    ],
+                    "to": [
+                        "request",
+                        "headers"
+                    ]
+                },
+                {
+                    "from": [
+                        "url"
+                    ],
+                    "to": [
+                        "request",
+                        "uri"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "basic",
+                    "to": [
+                        "auth",
+                        "authType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "GloopObject",
+                    "to": [
+                        "returnAs"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Auto Detect",
+                    "to": [
+                        "responseType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "POST",
+                    "to": [
+                        "request",
+                        "method"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "true",
+                    "to": [
+                        "throwHttpExceptions"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "response",
+                        "content"
+                    ],
+                    "to": [
+                        "PaypalAccessTokenGeneratorOutput"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.GroovyMethods",
+            "methodName": "savePackageProperty",
+            "parameters": [
+                "java.lang.String",
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "PaypalAccessTokenGeneratorOutput",
+                        "access_token"
+                    ],
+                    "to": [
+                        "value"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "paypal.accessToken",
+                    "to": [
+                        "key"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.GroovyMethods",
+            "methodName": "savePackageProperty",
+            "parameters": [
+                "java.lang.String",
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "PaypalAccessTokenGeneratorOutput",
+                        "expires_in"
+                    ],
+                    "to": [
+                        "value"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "paypal.token.expiresIn",
+                    "to": [
+                        "key"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.GroovyMethods",
+            "methodName": "savePackageProperty",
+            "parameters": [
+                "java.lang.String",
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "type": "set",
+                    "expression": "paypal.last.authorized.date",
+                    "to": [
+                        "key"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "new Date().time",
+                    "evaluate": true,
+                    "to": [
+                        "value"
+                    ]
+                }
+            ]
+        }
+    ]
+}

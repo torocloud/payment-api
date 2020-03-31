@@ -1,0 +1,59 @@
+{
+    "name": "BraintreeOutput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "id"
+        },
+        {
+            "name": "authorizedTransactionId"
+        },
+        {
+            "name": "refundId"
+        },
+        {
+            "name": "refundedTransactionId"
+        },
+        {
+            "name": "error"
+        },
+        {
+            "name": "authorizationExpiresAt",
+            "type": "long"
+        },
+        {
+            "name": "createdAt",
+            "type": "long"
+        },
+        {
+            "name": "gatewayRejectionReason"
+        },
+        {
+            "name": "processorAuthorizationCode"
+        },
+        {
+            "name": "processorResponseCode"
+        },
+        {
+            "name": "processorResponseText"
+        },
+        {
+            "name": "processorSettlementResponseCode"
+        },
+        {
+            "name": "processorSettlementResponseText"
+        },
+        {
+            "name": "status"
+        },
+        {
+            "name": "refundIds",
+            "array": true
+        },
+        {
+            "name": "partialSettlementTransactionIds",
+            "array": true
+        }
+    ]
+}

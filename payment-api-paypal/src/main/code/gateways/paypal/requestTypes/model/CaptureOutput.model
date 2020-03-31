@@ -1,0 +1,151 @@
+{
+    "name": "CaptureOutput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "id"
+        },
+        {
+            "name": "amount",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "currency_code"
+                },
+                {
+                    "name": "value"
+                }
+            ]
+        },
+        {
+            "name": "final_capture",
+            "type": "boolean"
+        },
+        {
+            "name": "seller_protection",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "status"
+                },
+                {
+                    "name": "dispute_categories",
+                    "array": true
+                }
+            ]
+        },
+        {
+            "name": "seller_receivable_breakdown",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "gross_amount",
+                    "type": "model",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "currency_code"
+                        },
+                        {
+                            "name": "value"
+                        }
+                    ]
+                },
+                {
+                    "name": "paypal_fee",
+                    "type": "model",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "currency_code"
+                        },
+                        {
+                            "name": "value"
+                        }
+                    ]
+                },
+                {
+                    "name": "net_amount",
+                    "type": "model",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "currency_code"
+                        },
+                        {
+                            "name": "value"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "status"
+        },
+        {
+            "name": "processor_response",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "avs_code"
+                },
+                {
+                    "name": "cvv_code"
+                },
+                {
+                    "name": "response_code"
+                },
+                {
+                    "name": "payment_advice_code"
+                }
+            ]
+        },
+        {
+            "name": "create_time"
+        },
+        {
+            "name": "update_time"
+        },
+        {
+            "name": "links",
+            "type": "model",
+            "array": true,
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "href"
+                },
+                {
+                    "name": "rel"
+                },
+                {
+                    "name": "method"
+                }
+            ]
+        },
+        {
+            "name": "details",
+            "type": "model",
+            "array": true,
+            "gloopProperties": [
+                {
+                    "name": "issue"
+                },
+                {
+                    "name": "description"
+                }
+            ]
+        },
+        {
+            "name": "error"
+        },
+        {
+            "name": "error_description"
+        }
+    ]
+}

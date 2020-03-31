@@ -1,0 +1,51 @@
+{
+    "name": "PaymentResponse",
+    "type": "model",
+    "gloopProperties": [
+        {
+            "name": "paymentGatewayId",
+            "minLength": 1,
+            "maxLength": 30
+        },
+        {
+            "name": "trackerId"
+        },
+        {
+            "name": "paymentState",
+            "minLength": 8,
+            "maxLength": 55,
+            "choices": [
+                "authorised",
+                "tokenised",
+                "captured",
+                "refunded",
+                "cancelled",
+                "unsupported"
+            ],
+            "allowOtherValues": true
+        },
+        {
+            "name": "serverTransactionReference"
+        },
+        {
+            "name": "serverTransactionReferenceHash"
+        },
+        {
+            "name": "token"
+        },
+        {
+            "name": "message",
+            "minLength": 1,
+            "maxLength": 1024
+        },
+        {
+            "name": "errors",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "message"
+                }
+            ]
+        }
+    ]
+}

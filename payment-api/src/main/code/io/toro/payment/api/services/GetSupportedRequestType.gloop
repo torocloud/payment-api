@@ -1,0 +1,228 @@
+{
+    "input": [
+        {
+            "name": "gateway"
+        }
+    ],
+    "output": [
+        {
+            "name": "requestTypes",
+            "array": true
+        },
+        {
+            "name": "responseCode",
+            "type": "integer"
+        },
+        {
+            "name": "APIException",
+            "type": "model",
+            "reference": "io.toro.martini.api.APIException"
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "invokeCode",
+                    "comments": "Set the requested payment gateway's package in the current context",
+                    "className": "io.toro.payment.api.utils.groovy.PackageContext",
+                    "methodName": "setPackageContext",
+                    "parameters": [
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "type": "set",
+                            "expression": "\"payment-api-${gateway?.toLowerCase()}\"",
+                            "evaluate": true,
+                            "to": [
+                                "packageName"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "comments": "Get the Integrate package from the current context",
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "registry",
+                                    "type": "object"
+                                }
+                            ]
+                        }
+                    ],
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "getPackage",
+                    "outputs": [
+                        {
+                            "type": "set",
+                            "expression": "$gloopOutput.output.getServiceContainerRegistry()",
+                            "evaluate": true,
+                            "to": [
+                                "registry"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "comments": "Retrieves all the Gloop services under this namespace",
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "gloopServices",
+                                    "type": "object",
+                                    "array": true
+                                }
+                            ]
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "registry.containers(\"gateways.${gateway}.requestTypes\", null)",
+                            "evaluate": true,
+                            "to": [
+                                "gloopServices"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "iterate",
+                    "input": {
+                        "path": [
+                            "gloopServices"
+                        ]
+                    },
+                    "children": [
+                        {
+                            "type": "invokeCode",
+                            "className": "io.toro.martini.LoggerMethods",
+                            "methodName": "info",
+                            "parameters": [
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "type": "set",
+                                    "expression": "gloopServices.services().get(0).name()",
+                                    "evaluate": true,
+                                    "to": [
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "invokeCode",
+                            "comments": "Adds each Gloop service name to the gateway String array",
+                            "className": "io.toro.martini.ArrayMethods",
+                            "methodName": "addToList",
+                            "parameters": [
+                                "java.lang.Object",
+                                "java.lang.Object"
+                            ],
+                            "inputs": [
+                                {
+                                    "from": [
+                                        "requestTypes"
+                                    ],
+                                    "to": [
+                                        "list"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "def ns = gloopServices.services().get(0).name().split('.')\n\nns[ns.size() - 1]",
+                                    "evaluate": true,
+                                    "to": [
+                                        "element"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "200",
+                            "to": [
+                                "responseCode"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "lines": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "APIException",
+                                "result"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "APIException",
+                                "payload"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "500",
+                            "to": [
+                                "responseCode"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

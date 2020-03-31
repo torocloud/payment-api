@@ -1,0 +1,94 @@
+{
+    "name": "RefundOutput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "id"
+        },
+        {
+            "name": "create_time"
+        },
+        {
+            "name": "update_time"
+        },
+        {
+            "name": "state"
+        },
+        {
+            "name": "amount",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "total"
+                },
+                {
+                    "name": "currency"
+                }
+            ]
+        },
+        {
+            "name": "refund_from_transaction_fee",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "currency"
+                },
+                {
+                    "name": "value"
+                }
+            ]
+        },
+        {
+            "name": "total_refunded_amount",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "currency"
+                },
+                {
+                    "name": "value"
+                }
+            ]
+        },
+        {
+            "name": "refund_from_received_amount",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "currency"
+                },
+                {
+                    "name": "value"
+                }
+            ]
+        },
+        {
+            "name": "capture_id"
+        },
+        {
+            "name": "links",
+            "type": "model",
+            "array": true,
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "href"
+                },
+                {
+                    "name": "rel"
+                },
+                {
+                    "name": "method"
+                }
+            ]
+        },
+        {
+            "name": "message"
+        }
+    ]
+}

@@ -1,0 +1,30 @@
+{
+    "name": "RefundInput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "originalReference"
+        },
+        {
+            "name": "modificationAmount",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "value",
+                    "type": "integer"
+                },
+                {
+                    "name": "currency"
+                }
+            ]
+        },
+        {
+            "name": "reference"
+        },
+        {
+            "name": "merchantAccount"
+        }
+    ]
+}

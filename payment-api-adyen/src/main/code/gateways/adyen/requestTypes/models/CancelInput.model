@@ -1,0 +1,16 @@
+{
+    "name": "CancelInput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "originalReference"
+        },
+        {
+            "name": "reference"
+        },
+        {
+            "name": "merchantAccount"
+        }
+    ]
+}

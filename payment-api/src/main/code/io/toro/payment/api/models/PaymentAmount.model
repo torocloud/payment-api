@@ -1,0 +1,16 @@
+{
+    "name": "PaymentAmount",
+    "type": "model",
+    "gloopProperties": [
+        {
+            "name": "value",
+            "type": "double",
+            "min": 0.5
+        },
+        {
+            "name": "currencyCode",
+            "minLength": 3,
+            "maxLength": 3
+        }
+    ]
+}

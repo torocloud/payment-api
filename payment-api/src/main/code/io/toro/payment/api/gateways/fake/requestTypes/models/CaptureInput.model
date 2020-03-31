@@ -1,0 +1,13 @@
+{
+    "name": "CaptureInput",
+    "type": "model",
+    "gloopProperties": [
+        {
+            "name": "transactionId"
+        },
+        {
+            "name": "amount",
+            "type": "bigDecimal"
+        }
+    ]
+}

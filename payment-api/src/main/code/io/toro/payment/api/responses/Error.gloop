@@ -1,0 +1,41 @@
+{
+    "comments": "This is a generic error service.",
+    "input": [
+        {
+            "name": "paymentRequest",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentRequest"
+        }
+    ],
+    "output": [
+        {
+            "name": "paymentResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentResponse"
+        }
+    ],
+    "steps": [
+        {
+            "lines": [
+                {
+                    "from": [
+                        "paymentRequest",
+                        "paymentGatewayId"
+                    ],
+                    "to": [
+                        "paymentResponse",
+                        "paymentGatewayId"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "The transaction was unsuccessful.",
+                    "to": [
+                        "paymentResponse",
+                        "message"
+                    ]
+                }
+            ]
+        }
+    ]
+}

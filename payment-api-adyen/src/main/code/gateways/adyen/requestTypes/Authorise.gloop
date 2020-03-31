@@ -1,0 +1,312 @@
+{
+    "input": [
+        {
+            "name": "url",
+            "defaultValue": ""
+        },
+        {
+            "name": "AuthoriseInput",
+            "type": "model",
+            "reference": "gateways.adyen.requestTypes.models.AuthoriseInput"
+        }
+    ],
+    "output": [
+        {
+            "name": "AuthoriseOutput",
+            "type": "model",
+            "reference": "gateways.adyen.requestTypes.models.AuthoriseOutput",
+            "allowExtraProperties": true
+        }
+    ],
+    "steps": [
+        {
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "headers",
+                            "type": "model",
+                            "reference": "io.toro.martini.http.Header"
+                        },
+                        {
+                            "name": "trackerRequest",
+                            "type": "model",
+                            "reference": "gateways.adyen.requestTypes.models.AuthoriseInput"
+                        }
+                    ]
+                }
+            ],
+            "lines": [
+                {
+                    "from": [
+                        "AuthoriseInput",
+                        "card",
+                        "expiryMonth"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "card",
+                        "expiryMonth"
+                    ]
+                },
+                {
+                    "from": [
+                        "AuthoriseInput",
+                        "card",
+                        "expiryYear"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "card",
+                        "expiryYear"
+                    ]
+                },
+                {
+                    "from": [
+                        "AuthoriseInput",
+                        "card",
+                        "holderName"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "card",
+                        "holderName"
+                    ]
+                },
+                {
+                    "from": [
+                        "AuthoriseInput",
+                        "amount",
+                        "value"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "amount",
+                        "value"
+                    ]
+                },
+                {
+                    "from": [
+                        "AuthoriseInput",
+                        "amount",
+                        "currency"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "amount",
+                        "currency"
+                    ]
+                },
+                {
+                    "from": [
+                        "AuthoriseInput",
+                        "reference"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "reference"
+                    ]
+                },
+                {
+                    "from": [
+                        "AuthoriseInput",
+                        "merchantAccount"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "merchantAccount"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "headers {\n\tname 'Content-Type'\n\tvalue 'application/json;charset=utf-8'\n}\nheaders {\n\tname 'X-API-Key'\n\tvalue \"${'adyen.api.key'.getPackageProperty( '' )}\"\n}\n",
+                    "evaluate": true,
+                    "to": [
+                        "headers"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "def output = 'io.toro.payment.api.utils.gloop.MaskCreditCardNumber'.gloop( [ccNumber: AuthoriseInput.card.number] )\n\noutput.maskedCCNumber",
+                    "evaluate": true,
+                    "to": [
+                        "trackerRequest",
+                        "card",
+                        "number"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "***",
+                    "to": [
+                        "trackerRequest",
+                        "card",
+                        "cvc"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.TrackerMethods",
+            "methodName": "addDocumentState",
+            "parameters": [
+                "java.lang.String",
+                "java.lang.String",
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "AuthoriseInput",
+                        "reference"
+                    ],
+                    "to": [
+                        "internalId"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Sent to gateway",
+                    "to": [
+                        "stateName"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "trackerRequest.asJson( false, false )",
+                    "evaluate": true,
+                    "to": [
+                        "content"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.HttpMethods",
+            "methodName": "http",
+            "parameters": [
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.object.property.GloopModel",
+                "java.lang.String",
+                "java.lang.String",
+                "boolean",
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.engine.GloopExecutionContext"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "headers"
+                    ],
+                    "to": [
+                        "request",
+                        "headers"
+                    ]
+                },
+                {
+                    "from": [
+                        "AuthoriseInput"
+                    ],
+                    "to": [
+                        "request",
+                        "body"
+                    ]
+                },
+                {
+                    "from": [
+                        "url"
+                    ],
+                    "to": [
+                        "request",
+                        "uri"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "GloopObject",
+                    "to": [
+                        "returnAs"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Auto Detect",
+                    "to": [
+                        "responseType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "application/json",
+                    "to": [
+                        "request",
+                        "contentType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "POST",
+                    "to": [
+                        "request",
+                        "method"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "GloopObject",
+                    "to": [
+                        "returnAs"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "true",
+                    "to": [
+                        "throwHttpExceptions"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "basic",
+                    "to": [
+                        "auth",
+                        "authType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "'adyen.merchant.username'.getPackageProperty( '' )",
+                    "evaluate": true,
+                    "to": [
+                        "auth",
+                        "basic",
+                        "username"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "'adyen.merchant.password'.getPackageProperty( '' )",
+                    "evaluate": true,
+                    "to": [
+                        "auth",
+                        "basic",
+                        "password"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "response",
+                        "content"
+                    ],
+                    "to": [
+                        "AuthoriseOutput"
+                    ]
+                }
+            ]
+        }
+    ]
+}

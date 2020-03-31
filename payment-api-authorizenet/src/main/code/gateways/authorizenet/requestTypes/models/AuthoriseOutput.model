@@ -1,0 +1,85 @@
+{
+    "name": "AuthoriseOutput",
+    "type": "model",
+    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "messages",
+            "type": "model",
+            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "resultCode",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                },
+                {
+                    "name": "message",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "code",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "text",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "transactionResponse",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "responseCode"
+                },
+                {
+                    "name": "avsResultCode"
+                },
+                {
+                    "name": "transId"
+                },
+                {
+                    "name": "transHash"
+                },
+                {
+                    "name": "transHashSha2"
+                },
+                {
+                    "name": "testRequest"
+                },
+                {
+                    "name": "accountNumber"
+                },
+                {
+                    "name": "accountType"
+                },
+                {
+                    "name": "errors",
+                    "type": "model",
+                    "gloopProperties": [
+                        {
+                            "name": "error",
+                            "type": "model",
+                            "gloopProperties": [
+                                {
+                                    "name": "errorCode"
+                                },
+                                {
+                                    "name": "errorText"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

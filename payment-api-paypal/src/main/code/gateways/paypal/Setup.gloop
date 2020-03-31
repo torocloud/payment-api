@@ -1,0 +1,351 @@
+{
+    "input": [
+        {
+            "name": "url",
+            "defaultValue": "https://api.sandbox.paypal.com"
+        },
+        {
+            "name": "apiVersion",
+            "defaultValue": "v2"
+        },
+        {
+            "name": "clientId",
+            "allowNull": false
+        },
+        {
+            "name": "secret",
+            "allowNull": false
+        },
+        {
+            "name": "merchantEmail"
+        }
+    ],
+    "output": [
+        {
+            "name": "APIResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.APIResponse"
+        }
+    ],
+    "paths": [
+        "/payments/paypal"
+    ],
+    "methods": [
+        "POST"
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "url"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "paypal.url",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackagePropertyComment",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "type": "set",
+                            "expression": "paypal.url",
+                            "to": [
+                                "key"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "PayPal",
+                            "to": [
+                                "comment"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "apiVersion"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "paypal.apiVersion",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "clientId"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "paypal.clientId",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "secret"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "paypal.secret",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "name": "gateways.paypal.util.PaypalAccessTokenGenerator",
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "payload",
+                                    "type": "model",
+                                    "gloopProperties": [
+                                        {
+                                            "name": "iss"
+                                        },
+                                        {
+                                            "name": "email"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "secret"
+                            ],
+                            "to": [
+                                "authorisation",
+                                "password"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "clientId"
+                            ],
+                            "to": [
+                                "authorisation",
+                                "username"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "\"${url}/v1/oauth2/token\"",
+                            "evaluate": true,
+                            "to": [
+                                "url"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "type": "set",
+                            "expression": "clientId",
+                            "evaluate": true,
+                            "to": [
+                                "payload",
+                                "iss"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "merchantEmail",
+                            "evaluate": true,
+                            "to": [
+                                "payload",
+                                "email"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "comments": "For v2 refunds",
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "assertId",
+                                    "comments": "String message based on the input"
+                                }
+                            ]
+                        }
+                    ],
+                    "className": "gateways.paypal.util.AssertionIdGenerator",
+                    "methodName": "generateAssertId",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "type": "set",
+                            "expression": "{\n  \"alg\": \"none\"\n}",
+                            "to": [
+                                "algPayload"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "payload.asJson( false, false )",
+                            "evaluate": true,
+                            "to": [
+                                "payload"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "assertId"
+                            ],
+                            "to": [
+                                "assertId"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "assertId"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "paypal.assertId",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "name": "io.toro.payment.api.responses.SuccessfullyInitializedGateway",
+                    "outputs": [
+                        {
+                            "from": [
+                                "APIResponse"
+                            ],
+                            "to": [
+                                "APIResponse"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

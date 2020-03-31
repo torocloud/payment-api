@@ -1,0 +1,161 @@
+{
+    "input": [
+        {
+            "name": "details",
+            "type": "model",
+            "array": true,
+            "gloopProperties": [
+                {
+                    "name": "issue"
+                },
+                {
+                    "name": "description"
+                }
+            ]
+        },
+        {
+            "name": "error_message"
+        }
+    ],
+    "output": [
+        {
+            "name": "mappedError"
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "fork",
+                    "expression": "details.size() > 0",
+                    "children": [
+                        {
+                            "type": "block",
+                            "label": "true",
+                            "children": [
+                                {
+                                    "declare": [
+                                        {
+                                            "variables": [
+                                                {
+                                                    "name": "errors",
+                                                    "array": true
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "iterate",
+                                    "input": {
+                                        "path": [
+                                            "details"
+                                        ]
+                                    },
+                                    "output": {
+                                        "path": [
+                                            "errors"
+                                        ]
+                                    },
+                                    "children": [
+                                        {
+                                            "lines": [
+                                                {
+                                                    "from": [
+                                                        "details",
+                                                        "description"
+                                                    ],
+                                                    "to": [
+                                                        "errors"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "lines": [
+                                        {
+                                            "type": "set",
+                                            "expression": "errors.join( ',' )",
+                                            "evaluate": true,
+                                            "to": [
+                                                "mappedError"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "fork",
+                            "label": "false",
+                            "expression": "details.size() == 0 && !org.apache.commons.lang3.StringUtils.isEmpty( error_message )",
+                            "children": [
+                                {
+                                    "label": "true",
+                                    "lines": [
+                                        {
+                                            "from": [
+                                                "error_message"
+                                            ],
+                                            "to": [
+                                                "mappedError"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "lines": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "mappedError"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,80 @@
+{
+    "input": [
+        {
+            "name": "state"
+        }
+    ],
+    "output": [
+        {
+            "name": "requestState"
+        }
+    ],
+    "steps": [
+        {
+            "type": "fork",
+            "expression": "state",
+            "children": [
+                {
+                    "label": "authorise",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "Authorising",
+                            "to": [
+                                "requestState"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "capture",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "Capturing",
+                            "to": [
+                                "requestState"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "refund",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "Refunding",
+                            "to": [
+                                "requestState"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "tokenise",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "Tokenising",
+                            "to": [
+                                "requestState"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "cancel",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "Cancelling",
+                            "to": [
+                                "requestState"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

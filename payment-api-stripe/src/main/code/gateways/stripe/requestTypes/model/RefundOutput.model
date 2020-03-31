@@ -1,0 +1,77 @@
+{
+    "name": "RefundOutput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "id"
+        },
+        {
+            "name": "object"
+        },
+        {
+            "name": "amount",
+            "type": "bigDecimal"
+        },
+        {
+            "name": "balance_transaction"
+        },
+        {
+            "name": "charge"
+        },
+        {
+            "name": "created",
+            "type": "bigDecimal"
+        },
+        {
+            "name": "currency"
+        },
+        {
+            "name": "metadata",
+            "type": "model",
+            "allowExtraProperties": true
+        },
+        {
+            "name": "payment_intent",
+            "type": "object"
+        },
+        {
+            "name": "reason",
+            "type": "object"
+        },
+        {
+            "name": "receipt_number",
+            "type": "object"
+        },
+        {
+            "name": "source_transfer_reversal",
+            "type": "object"
+        },
+        {
+            "name": "status"
+        },
+        {
+            "name": "transfer_reversal",
+            "type": "object"
+        },
+        {
+            "name": "error",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "code"
+                },
+                {
+                    "name": "doc_url"
+                },
+                {
+                    "name": "message"
+                },
+                {
+                    "name": "type"
+                }
+            ]
+        }
+    ]
+}

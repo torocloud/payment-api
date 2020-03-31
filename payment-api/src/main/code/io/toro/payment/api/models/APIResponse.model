@@ -1,0 +1,16 @@
+{
+    "name": "APIResponse",
+    "type": "model",
+    "gloopProperties": [
+        {
+            "name": "result",
+            "choices": [
+                "SUCCESS",
+                "ERROR"
+            ]
+        },
+        {
+            "name": "message"
+        }
+    ]
+}

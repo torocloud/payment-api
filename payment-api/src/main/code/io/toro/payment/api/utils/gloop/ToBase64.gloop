@@ -1,0 +1,26 @@
+{
+    "input": [
+        {
+            "name": "inputString"
+        }
+    ],
+    "output": [
+        {
+            "name": "base64String"
+        }
+    ],
+    "steps": [
+        {
+            "lines": [
+                {
+                    "type": "set",
+                    "expression": "inputString.bytes.encodeBase64()",
+                    "evaluate": true,
+                    "to": [
+                        "base64String"
+                    ]
+                }
+            ]
+        }
+    ]
+}

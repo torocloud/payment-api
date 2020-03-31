@@ -1,0 +1,72 @@
+{
+    "name": "RefundInput",
+    "type": "model",
+    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "merchantAuthentication",
+            "type": "model",
+            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "name",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                },
+                {
+                    "name": "transactionKey",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                }
+            ]
+        },
+        {
+            "name": "refId",
+            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+        },
+        {
+            "name": "transactionRequest",
+            "type": "model",
+            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "transactionType",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                },
+                {
+                    "name": "amount",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                },
+                {
+                    "name": "payment",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "creditCard",
+                            "type": "model",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                            "allowExtraProperties": true,
+                            "gloopProperties": [
+                                {
+                                    "name": "cardNumber",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                },
+                                {
+                                    "name": "expirationDate",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "refTransId",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                }
+            ]
+        }
+    ]
+}

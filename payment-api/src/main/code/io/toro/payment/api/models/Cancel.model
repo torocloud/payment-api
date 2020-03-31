@@ -1,0 +1,11 @@
+{
+    "name": "Cancel",
+    "type": "model",
+    "gloopProperties": [
+        {
+            "name": "serverTransactionReference",
+            "minLength": 1,
+            "maxLength": 100
+        }
+    ]
+}

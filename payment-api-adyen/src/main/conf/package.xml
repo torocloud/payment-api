@@ -1,0 +1,11 @@
+<package stateOnStartup="started" id="payment-api-adyen" version="1.0.14" context-path="/payment-api-adyen">
+  <package-dependencies>
+    <package-dependency>
+      <name>payment-api</name>
+      <id>payment-api</id>
+      <required-state-on-start>loaded</required-state-on-start>
+    </package-dependency>
+  </package-dependencies>
+  <startup-services/>
+  <shutdown-services/>
+</package>

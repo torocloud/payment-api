@@ -1,0 +1,134 @@
+{
+    "name": "TokenizeOutput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "id"
+        },
+        {
+            "name": "object"
+        },
+        {
+            "name": "card",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "id"
+                },
+                {
+                    "name": "object"
+                },
+                {
+                    "name": "address_city"
+                },
+                {
+                    "name": "address_country"
+                },
+                {
+                    "name": "address_line1"
+                },
+                {
+                    "name": "address_line1_check"
+                },
+                {
+                    "name": "address_line2"
+                },
+                {
+                    "name": "address_state"
+                },
+                {
+                    "name": "address_zip",
+                    "type": "object"
+                },
+                {
+                    "name": "address_zip_check",
+                    "type": "object"
+                },
+                {
+                    "name": "brand"
+                },
+                {
+                    "name": "country"
+                },
+                {
+                    "name": "cvc_check"
+                },
+                {
+                    "name": "dynamic_last4",
+                    "type": "object"
+                },
+                {
+                    "name": "exp_month",
+                    "type": "bigDecimal"
+                },
+                {
+                    "name": "exp_year",
+                    "type": "bigDecimal"
+                },
+                {
+                    "name": "fingerprint"
+                },
+                {
+                    "name": "funding"
+                },
+                {
+                    "name": "last4"
+                },
+                {
+                    "name": "metadata",
+                    "type": "model",
+                    "allowExtraProperties": true
+                },
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "tokenization_method",
+                    "type": "object"
+                }
+            ]
+        },
+        {
+            "name": "client_ip"
+        },
+        {
+            "name": "created",
+            "type": "bigDecimal"
+        },
+        {
+            "name": "livemode",
+            "type": "boolean"
+        },
+        {
+            "name": "type"
+        },
+        {
+            "name": "used",
+            "type": "boolean"
+        },
+        {
+            "name": "error",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "code"
+                },
+                {
+                    "name": "doc_url"
+                },
+                {
+                    "name": "message"
+                },
+                {
+                    "name": "type"
+                },
+                {
+                    "name": "param"
+                }
+            ]
+        }
+    ]
+}

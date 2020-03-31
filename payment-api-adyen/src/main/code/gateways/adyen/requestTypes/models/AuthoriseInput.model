@@ -1,0 +1,49 @@
+{
+    "name": "AuthoriseInput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "card",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "number"
+                },
+                {
+                    "name": "expiryMonth"
+                },
+                {
+                    "name": "expiryYear"
+                },
+                {
+                    "name": "cvc"
+                },
+                {
+                    "name": "holderName"
+                }
+            ]
+        },
+        {
+            "name": "amount",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "value",
+                    "type": "integer"
+                },
+                {
+                    "name": "currency"
+                }
+            ]
+        },
+        {
+            "name": "reference"
+        },
+        {
+            "name": "merchantAccount"
+        }
+    ]
+}

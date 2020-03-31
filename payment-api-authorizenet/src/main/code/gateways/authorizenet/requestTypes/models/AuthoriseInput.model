@@ -1,0 +1,305 @@
+{
+    "name": "AuthoriseInput",
+    "type": "model",
+    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "merchantAuthentication",
+            "type": "model",
+            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "name",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                },
+                {
+                    "name": "transactionKey",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                }
+            ]
+        },
+        {
+            "name": "refId",
+            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+        },
+        {
+            "name": "transactionRequest",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "transactionType"
+                },
+                {
+                    "name": "amount"
+                },
+                {
+                    "name": "payment",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "creditCard",
+                            "type": "model",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                            "allowExtraProperties": true,
+                            "gloopProperties": [
+                                {
+                                    "name": "cardNumber",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                },
+                                {
+                                    "name": "expirationDate",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                },
+                                {
+                                    "name": "cardCode",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "order",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "invoiceNumber",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "description",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        }
+                    ]
+                },
+                {
+                    "name": "lineItems",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "lineItem",
+                            "type": "model",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                            "allowExtraProperties": true,
+                            "gloopProperties": [
+                                {
+                                    "name": "itemId",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                },
+                                {
+                                    "name": "name",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                },
+                                {
+                                    "name": "description",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                },
+                                {
+                                    "name": "quantity",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                },
+                                {
+                                    "name": "unitPrice",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "tax",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "amount",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "name",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "description",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        }
+                    ]
+                },
+                {
+                    "name": "duty",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "amount",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "name",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "description",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        }
+                    ]
+                },
+                {
+                    "name": "shipping",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "amount",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "name",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "description",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        }
+                    ]
+                },
+                {
+                    "name": "poNumber",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                },
+                {
+                    "name": "customer",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "id",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        }
+                    ]
+                },
+                {
+                    "name": "billTo",
+                    "type": "model",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "firstName",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "lastName",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "company",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "address",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "city",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "state",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "zip",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "country",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        }
+                    ]
+                },
+                {
+                    "name": "shipTo",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "firstName",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "lastName",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "company",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "address",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "city",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "state",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "zip",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "country",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        }
+                    ]
+                },
+                {
+                    "name": "customerIP",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                },
+                {
+                    "name": "userFields",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "userField",
+                            "type": "model",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                            "array": true,
+                            "allowExtraProperties": true,
+                            "gloopProperties": [
+                                {
+                                    "name": "name",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                },
+                                {
+                                    "name": "value",
+                                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

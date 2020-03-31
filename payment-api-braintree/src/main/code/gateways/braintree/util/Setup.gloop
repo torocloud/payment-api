@@ -1,0 +1,206 @@
+{
+    "input": [
+        {
+            "name": "merchantId"
+        },
+        {
+            "name": "publicKey"
+        },
+        {
+            "name": "privateKey"
+        },
+        {
+            "name": "environment",
+            "defaultValue": "SANDBOX",
+            "choices": [
+                "SANDBOX",
+                "PRODUCTION"
+            ]
+        }
+    ],
+    "output": [
+        {
+            "name": "APIResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.APIResponse"
+        }
+    ],
+    "paths": [
+        "/payments/braintree"
+    ],
+    "methods": [
+        "POST"
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackagePropertyComment",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "type": "set",
+                            "expression": "braintree.merchantId",
+                            "to": [
+                                "key"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "Braintree",
+                            "to": [
+                                "comment"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "type": "set",
+                            "expression": "braintree.environment",
+                            "to": [
+                                "key"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "environment"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "merchantId"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "braintree.merchantId",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "publicKey"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "braintree.publicKey",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "privateKey"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "braintree.privateKey",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "name": "io.toro.payment.api.responses.SuccessfullyInitializedGateway",
+                    "outputs": [
+                        {
+                            "from": [
+                                "APIResponse"
+                            ],
+                            "to": [
+                                "APIResponse"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

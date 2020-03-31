@@ -1,0 +1,842 @@
+{
+    "input": [
+        {
+            "name": "paymentRequest",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentRequest"
+        }
+    ],
+    "output": [
+        {
+            "name": "paymentResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentResponse"
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "fork",
+                    "expression": "'braintree.environment'.getPackageProperty() != null",
+                    "children": [
+                        {
+                            "type": "fork",
+                            "label": "true",
+                            "expression": "paymentRequest.requestType",
+                            "children": [
+                                {
+                                    "type": "block",
+                                    "label": "authorise",
+                                    "children": [
+                                        {
+                                            "type": "invokeCode",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "braintreeOutput",
+                                                            "type": "model",
+                                                            "reference": "gateways.braintree.model.BraintreeOutput"
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "className": "gateways.braintree.wrapper.BraintreeSdkWrapper",
+                                            "methodName": "Authorise",
+                                            "parameters": [
+                                                "io.toro.gloop.object.property.GloopModel",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "firstName"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "billingAddress",
+                                                        "firstName"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "lastName"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "billingAddress",
+                                                        "lastName"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "companyName"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "billingAddress",
+                                                        "company"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "line1"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "billingAddress",
+                                                        "streetAddress"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "line2"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "billingAddress",
+                                                        "extendedAddress"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "city"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "billingAddress",
+                                                        "locality"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "state"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "billingAddress",
+                                                        "region"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "countryCode"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "billingAddress",
+                                                        "countryCodeAlpha2"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "billingAddress",
+                                                        "postalCode"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "billingAddress",
+                                                        "postalCode"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "holderName"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "creditCard",
+                                                        "cardHolderName"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "number"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "creditCard",
+                                                        "number"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "verificationValue"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "creditCard",
+                                                        "cvv"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "expiryMonth"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "creditCard",
+                                                        "expirationMonth"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "expiryYear"
+                                                    ],
+                                                    "to": [
+                                                        "authorizeInput",
+                                                        "creditCard",
+                                                        "expirationYear"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "paymentAmount",
+                                                        "value"
+                                                    ],
+                                                    "to": [
+                                                        "amount"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "trackerId"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput"
+                                                    ],
+                                                    "to": [
+                                                        "braintreeOutput"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput",
+                                                        "error"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput",
+                                                        "id"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Braintree",
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentResponse?.errors?.message ? 'Transaction failed' : 'Transaction successfully completed'",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ],
+                                                    "priority": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway responded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "braintreeOutput.asJson(false, false)",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "block",
+                                    "label": "capture",
+                                    "children": [
+                                        {
+                                            "type": "invokeCode",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "braintreeOutput",
+                                                            "type": "model",
+                                                            "reference": "gateways.braintree.model.BraintreeOutput"
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "className": "gateways.braintree.wrapper.BraintreeSdkWrapper",
+                                            "methodName": "Capture",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "trackerId"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "paymentAmount",
+                                                        "value"
+                                                    ],
+                                                    "to": [
+                                                        "amount"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "capture",
+                                                        "serverTransactionReference"
+                                                    ],
+                                                    "to": [
+                                                        "serverTransactionReference"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput"
+                                                    ],
+                                                    "to": [
+                                                        "braintreeOutput"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput",
+                                                        "error"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput",
+                                                        "id"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Braintree",
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentResponse?.errors?.message ? 'Transaction failed' : 'Transaction successfully completed'",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway responded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "braintreeOutput.asJson( false, false )",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "block",
+                                    "label": "refund",
+                                    "children": [
+                                        {
+                                            "type": "invokeCode",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "braintreeOutput",
+                                                            "type": "model",
+                                                            "reference": "gateways.braintree.model.BraintreeOutput"
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "className": "gateways.braintree.wrapper.BraintreeSdkWrapper",
+                                            "methodName": "Refund",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "paymentAmount",
+                                                        "value"
+                                                    ],
+                                                    "to": [
+                                                        "amount"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "refund",
+                                                        "serverTransactionReference"
+                                                    ],
+                                                    "to": [
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "trackerId"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput"
+                                                    ],
+                                                    "to": [
+                                                        "braintreeOutput"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput",
+                                                        "id"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput",
+                                                        "error"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentResponse?.errors?.message ? 'Transaction failed' : 'Transaction successfully completed'",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Braintree",
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway responded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "braintreeOutput.asJson( false, false )",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "block",
+                                    "label": "cancel",
+                                    "children": [
+                                        {
+                                            "type": "invokeCode",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "braintreeOutput",
+                                                            "type": "model",
+                                                            "reference": "gateways.braintree.model.BraintreeOutput"
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "className": "gateways.braintree.wrapper.BraintreeSdkWrapper",
+                                            "methodName": "Cancel",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "cancel",
+                                                        "serverTransactionReference"
+                                                    ],
+                                                    "to": [
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "trackerId"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput"
+                                                    ],
+                                                    "to": [
+                                                        "braintreeOutput"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput",
+                                                        "id"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "braintreeOutput",
+                                                        "error"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentResponse?.errors?.message ? 'Transaction failed' : 'Transaction successfully completed'",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Braintree",
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway responded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "braintreeOutput.asJson( false, false )",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "label": "false",
+                            "lines": [
+                                {
+                                    "type": "set",
+                                    "expression": "Oops! It looks like you didn't setup the gateway. Run the Setup service to fix this error.",
+                                    "to": [
+                                        "paymentResponse",
+                                        "errors",
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "name": "io.toro.payment.api.responses.Error",
+                    "inputs": [
+                        {
+                            "from": [
+                                "paymentRequest"
+                            ],
+                            "to": [
+                                "paymentRequest"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "paymentResponse"
+                            ],
+                            "to": [
+                                "paymentResponse"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "lines": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "paymentResponse",
+                                "errors",
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

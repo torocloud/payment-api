@@ -1,0 +1,123 @@
+{
+    "name": "PaymentRequest",
+    "type": "model",
+    "gloopProperties": [
+        {
+            "name": "trackerId",
+            "minLength": 5,
+            "maxLength": 50
+        },
+        {
+            "name": "orderId",
+            "allowNull": false,
+            "minLength": 5,
+            "maxLength": 80
+        },
+        {
+            "name": "storeInstance",
+            "allowNull": false,
+            "minLength": 5,
+            "maxLength": 20
+        },
+        {
+            "name": "paymentGatewayId",
+            "allowNull": false,
+            "defaultValue": "Fake",
+            "minLength": 3,
+            "maxLength": 20,
+            "choices": [
+                "Adyen",
+                "AuthorizeNet",
+                "Braintree",
+                "Fake",
+                "Paypal",
+                "Stripe"
+            ]
+        },
+        {
+            "name": "requestType",
+            "allowNull": false,
+            "minLength": 6,
+            "maxLength": 9,
+            "choices": [
+                "authorise",
+                "tokenise",
+                "capture",
+                "refund",
+                "cancel"
+            ]
+        },
+        {
+            "name": "billingAddress",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.Address"
+        },
+        {
+            "name": "paymentAmount",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentAmount"
+        },
+        {
+            "name": "authorisation",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.Authorisation"
+        },
+        {
+            "name": "capture",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.Capture"
+        },
+        {
+            "name": "refund",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.Refund"
+        },
+        {
+            "name": "cancel",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.Cancel"
+        },
+        {
+            "name": "tokenise",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "holderName",
+                    "minLength": 2,
+                    "maxLength": 30
+                },
+                {
+                    "name": "type",
+                    "choices": [
+                        "visa",
+                        "mastercard",
+                        "jcb",
+                        "discover",
+                        "amex",
+                        "diner"
+                    ]
+                },
+                {
+                    "name": "number",
+                    "type": "bigInteger"
+                },
+                {
+                    "name": "verificationValue",
+                    "minLength": 3,
+                    "maxLength": 4
+                },
+                {
+                    "name": "expiryMonth",
+                    "type": "short",
+                    "validationExpression": "val >= (new Date().getMonth() + 1)",
+                    "min": 1,
+                    "max": 12
+                },
+                {
+                    "name": "expiryYear",
+                    "validationExpression": "( val.toInt() + 5 ) > new Date().getYear()"
+                }
+            ]
+        }
+    ]
+}

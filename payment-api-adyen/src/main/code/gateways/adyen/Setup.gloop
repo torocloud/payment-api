@@ -1,0 +1,179 @@
+{
+    "input": [
+        {
+            "name": "url"
+        },
+        {
+            "name": "merchantAccount"
+        },
+        {
+            "name": "merchantUsername"
+        },
+        {
+            "name": "merchantPassword"
+        },
+        {
+            "name": "apiKey"
+        }
+    ],
+    "output": [
+        {
+            "name": "APIResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.APIResponse"
+        }
+    ],
+    "paths": [
+        "/payments/adyen"
+    ],
+    "methods": [
+        "POST"
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "url"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "adyen.url",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "merchantAccount"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "adyen.merchantAccount",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "type": "set",
+                            "expression": "adyen.merchant.username",
+                            "to": [
+                                "key"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "merchantUsername"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "type": "set",
+                            "expression": "adyen.merchant.password",
+                            "to": [
+                                "key"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "merchantPassword"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "name": "io.toro.payment.api.responses.SuccessfullyInitializedGateway",
+                    "outputs": [
+                        {
+                            "from": [
+                                "APIResponse"
+                            ],
+                            "to": [
+                                "APIResponse"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

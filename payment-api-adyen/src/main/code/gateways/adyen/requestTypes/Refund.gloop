@@ -1,0 +1,208 @@
+{
+    "input": [
+        {
+            "name": "url",
+            "defaultValue": ""
+        },
+        {
+            "name": "RefundInput",
+            "type": "model",
+            "reference": "gateways.adyen.requestTypes.models.RefundInput"
+        }
+    ],
+    "output": [
+        {
+            "name": "RefundOutput",
+            "type": "model",
+            "reference": "gateways.adyen.requestTypes.models.RefundOutput",
+            "allowExtraProperties": true
+        }
+    ],
+    "steps": [
+        {
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "headers",
+                            "type": "model",
+                            "reference": "io.toro.martini.http.Header"
+                        }
+                    ]
+                }
+            ],
+            "lines": [
+                {
+                    "type": "set",
+                    "expression": "headers {\n\tname 'Content-Type'\n\tvalue 'application/json'\n}\nheaders {\n\tname 'X-API-Key'\n\tvalue \"${'adyen.api.key'.getPackageProperty( '' )}\"\n}\n",
+                    "evaluate": true,
+                    "to": [
+                        "headers"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.TrackerMethods",
+            "methodName": "addDocumentState",
+            "parameters": [
+                "java.lang.String",
+                "java.lang.String",
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "RefundInput",
+                        "reference"
+                    ],
+                    "to": [
+                        "internalId"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Sent to gateway",
+                    "to": [
+                        "stateName"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "RefundInput.asJson( false, false )",
+                    "evaluate": true,
+                    "to": [
+                        "content"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.HttpMethods",
+            "methodName": "http",
+            "parameters": [
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.object.property.GloopModel",
+                "java.lang.String",
+                "java.lang.String",
+                "boolean",
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.engine.GloopExecutionContext"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "headers"
+                    ],
+                    "to": [
+                        "request",
+                        "headers"
+                    ]
+                },
+                {
+                    "from": [
+                        "RefundInput"
+                    ],
+                    "to": [
+                        "request",
+                        "body"
+                    ]
+                },
+                {
+                    "from": [
+                        "url"
+                    ],
+                    "to": [
+                        "request",
+                        "uri"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "basic",
+                    "to": [
+                        "auth",
+                        "authType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "GloopObject",
+                    "to": [
+                        "returnAs"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Auto Detect",
+                    "to": [
+                        "responseType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "application/json",
+                    "to": [
+                        "request",
+                        "contentType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "POST",
+                    "to": [
+                        "request",
+                        "method"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "GloopObject",
+                    "to": [
+                        "returnAs"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "true",
+                    "to": [
+                        "throwHttpExceptions"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "'adyen.merchant.username'.getPackageProperty()",
+                    "evaluate": true,
+                    "to": [
+                        "auth",
+                        "basic",
+                        "username"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "'adyen.merchant.password'.getPackageProperty()",
+                    "evaluate": true,
+                    "to": [
+                        "auth",
+                        "basic",
+                        "password"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "response",
+                        "content"
+                    ],
+                    "to": [
+                        "RefundOutput"
+                    ]
+                }
+            ]
+        }
+    ]
+}

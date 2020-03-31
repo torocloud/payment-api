@@ -1,0 +1,193 @@
+{
+    "output": [
+        {
+            "name": "gateways",
+            "array": true,
+            "defaultValue": [
+                "Acme"
+            ]
+        },
+        {
+            "name": "responseCode",
+            "type": "integer"
+        },
+        {
+            "name": "APIException",
+            "type": "model",
+            "reference": "io.toro.martini.api.APIException"
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "invokeCode",
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "integratePackages",
+                                    "type": "model",
+                                    "array": true,
+                                    "reference": "io.toro.martini.package.Package"
+                                }
+                            ]
+                        }
+                    ],
+                    "className": "io.toro.martini.MartiniMethods",
+                    "methodName": "getPackages",
+                    "outputs": [
+                        {
+                            "from": [
+                                "martiniPackages"
+                            ],
+                            "to": [
+                                "integratePackages"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "iterate",
+                    "comments": "Iterates over the packages and looks for Integrate packages prefixed with \"payment-api-\"",
+                    "input": {
+                        "path": [
+                            "integratePackages"
+                        ]
+                    },
+                    "children": [
+                        {
+                            "type": "invokeCode",
+                            "className": "io.toro.martini.LoggerMethods",
+                            "methodName": "info",
+                            "parameters": [
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "type": "set",
+                                    "expression": "integratePackages.name",
+                                    "evaluate": true,
+                                    "to": [
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "fork",
+                            "comments": "Does the Integrate package starts with 'payment-api-' prefix?",
+                            "expression": "integratePackages.name.startsWith( 'payment-api-' )",
+                            "children": [
+                                {
+                                    "type": "invokeCode",
+                                    "label": "true",
+                                    "comments": "If true, add an entry to the String array `gateways`",
+                                    "className": "io.toro.martini.ArrayMethods",
+                                    "methodName": "addToList",
+                                    "parameters": [
+                                        "java.lang.Object",
+                                        "java.lang.Object"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "gateways"
+                                            ],
+                                            "to": [
+                                                "list"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "integratePackages.name.replace('payment-api-', '')",
+                                            "evaluate": true,
+                                            "to": [
+                                                "element"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "200",
+                            "to": [
+                                "responseCode"
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "lines": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "APIException",
+                                "result"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "APIException",
+                                "payload"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "500",
+                            "to": [
+                                "responseCode"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

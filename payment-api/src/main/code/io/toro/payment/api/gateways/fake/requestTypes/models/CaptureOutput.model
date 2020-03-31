@@ -1,0 +1,17 @@
+{
+    "name": "CaptureOutput",
+    "type": "model",
+    "gloopProperties": [
+        {
+            "name": "success",
+            "type": "boolean"
+        },
+        {
+            "name": "authorizedAmount",
+            "type": "bigDecimal"
+        },
+        {
+            "name": "message"
+        }
+    ]
+}

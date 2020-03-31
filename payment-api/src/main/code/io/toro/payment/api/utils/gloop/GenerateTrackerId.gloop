@@ -1,0 +1,133 @@
+{
+    "input": [
+        {
+            "name": "gateway",
+            "choices": [
+                "Adyen",
+                "Amazon",
+                "AuthorizeNet",
+                "Bambora",
+                "Braintree",
+                "Eway",
+                "Fake",
+                "Fake2Gateway",
+                "Payflow",
+                "PaymentSpring",
+                "Paymill",
+                "Paypal",
+                "Stripe",
+                "Squareup",
+                "WorldPay"
+            ]
+        }
+    ],
+    "output": [
+        {
+            "name": "trackerId"
+        }
+    ],
+    "steps": [
+        {
+            "type": "fork",
+            "expression": "gateway",
+            "children": [
+                {
+                    "label": "AuthorizeNet",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "\"anet-${System.currentTimeMillis()}\"",
+                            "evaluate": true,
+                            "to": [
+                                "trackerId"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "Adyen",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "\"ady-${System.currentTimeMillis()}\"",
+                            "evaluate": true,
+                            "to": [
+                                "trackerId"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "Braintree",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "\"bt-${System.currentTimeMillis()}\"",
+                            "evaluate": true,
+                            "to": [
+                                "trackerId"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "Fake",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "\"payment-${System.currentTimeMillis()}\"",
+                            "evaluate": true,
+                            "to": [
+                                "trackerId"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "Paypal",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "\"pp-${System.currentTimeMillis()}\"",
+                            "evaluate": true,
+                            "to": [
+                                "trackerId"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "Stripe",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "\"stripe-${System.currentTimeMillis()}\"",
+                            "evaluate": true,
+                            "to": [
+                                "trackerId"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "label": "$else",
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "\"payment-${System.currentTimeMillis()}\"",
+                            "evaluate": true,
+                            "to": [
+                                "trackerId"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "block",
+                    "label": "TODO",
+                    "comments": "Add more tracker id generator for other gateways"
+                }
+            ]
+        }
+    ]
+}

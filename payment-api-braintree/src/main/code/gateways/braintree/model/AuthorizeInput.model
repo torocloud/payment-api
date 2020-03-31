@@ -1,0 +1,64 @@
+{
+    "name": "AuthorizeInput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "creditCard",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "cardHolderName",
+                    "defaultValue": ""
+                },
+                {
+                    "name": "number",
+                    "defaultValue": ""
+                },
+                {
+                    "name": "cvv",
+                    "defaultValue": ""
+                },
+                {
+                    "name": "expirationMonth"
+                },
+                {
+                    "name": "expirationYear"
+                }
+            ]
+        },
+        {
+            "name": "billingAddress",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "firstName"
+                },
+                {
+                    "name": "lastName"
+                },
+                {
+                    "name": "company"
+                },
+                {
+                    "name": "streetAddress"
+                },
+                {
+                    "name": "extendedAddress"
+                },
+                {
+                    "name": "locality"
+                },
+                {
+                    "name": "region"
+                },
+                {
+                    "name": "postalCode"
+                },
+                {
+                    "name": "countryCodeAlpha2"
+                }
+            ]
+        }
+    ]
+}

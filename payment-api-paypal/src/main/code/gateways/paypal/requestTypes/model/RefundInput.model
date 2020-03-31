@@ -1,0 +1,20 @@
+{
+    "name": "RefundInput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "amount",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "total"
+                },
+                {
+                    "name": "currency"
+                }
+            ]
+        }
+    ]
+}

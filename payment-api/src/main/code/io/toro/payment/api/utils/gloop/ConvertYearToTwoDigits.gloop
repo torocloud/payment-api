@@ -1,0 +1,26 @@
+{
+    "input": [
+        {
+            "name": "inputString"
+        }
+    ],
+    "output": [
+        {
+            "name": "twoDigitYear"
+        }
+    ],
+    "steps": [
+        {
+            "lines": [
+                {
+                    "type": "set",
+                    "expression": "inputString.substring(2)",
+                    "evaluate": true,
+                    "to": [
+                        "twoDigitYear"
+                    ]
+                }
+            ]
+        }
+    ]
+}

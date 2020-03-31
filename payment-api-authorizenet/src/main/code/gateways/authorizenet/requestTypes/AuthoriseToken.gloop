@@ -1,0 +1,136 @@
+{
+    "input": [
+        {
+            "name": "url",
+            "defaultValue": ""
+        },
+        {
+            "name": "headers",
+            "type": "model",
+            "array": true,
+            "reference": "io.toro.martini.http.Header"
+        },
+        {
+            "name": "AuthoriseTokenInput",
+            "type": "model",
+            "reference": "gateways.authorizenet.requestTypes.models.AuthoriseTokenInput"
+        }
+    ],
+    "output": [
+        {
+            "name": "response",
+            "type": "model",
+            "reference": "io.toro.martini.http.Response"
+        }
+    ],
+    "steps": [
+        {
+            "lines": [
+                {
+                    "type": "set",
+                    "expression": "header {\n\tname 'Content-Type'\n\tvalue 'application/xml'\n}\n",
+                    "to": [
+                        "headers"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.HttpMethods",
+            "methodName": "http",
+            "parameters": [
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.object.property.GloopModel",
+                "java.lang.String",
+                "java.lang.String",
+                "boolean",
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.engine.GloopExecutionContext"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "headers"
+                    ],
+                    "to": [
+                        "request",
+                        "headers"
+                    ]
+                },
+                {
+                    "from": [
+                        "AuthoriseTokenInput"
+                    ],
+                    "to": [
+                        "request",
+                        "body"
+                    ]
+                },
+                {
+                    "from": [
+                        "url"
+                    ],
+                    "to": [
+                        "request",
+                        "uri"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "String",
+                    "to": [
+                        "returnAs"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Auto Detect",
+                    "to": [
+                        "responseType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "application/xml",
+                    "to": [
+                        "request",
+                        "contentType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "POST",
+                    "to": [
+                        "request",
+                        "method"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "GloopObject",
+                    "to": [
+                        "returnAs"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "true",
+                    "to": [
+                        "throwHttpExceptions"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "response"
+                    ],
+                    "to": [
+                        "response"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,859 @@
+{
+    "comments": "Implemented request types:\n- Authorise\n- Capture\n- Cancel\n- Refund\n\nWebsite: https://www.adyen.com\nAPI Documentation page: https://docs.adyen.com/developers/api-reference",
+    "input": [
+        {
+            "name": "paymentRequest",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentRequest"
+        }
+    ],
+    "output": [
+        {
+            "name": "paymentResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentResponse",
+            "allowExtraProperties": true
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "isZeroDecimalCurrency",
+                                    "type": "boolean"
+                                }
+                            ]
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "def zeroDecimalCurrencies = ['mga', 'bif', 'clp', 'pyg', 'djf', 'rwf', 'gnf', 'ugx', 'jpy','vnd', 'vuv', 'kmf', 'krw', 'xaf', 'xof', 'xpf']\n\nisZeroDecimalCurrency = paymentRequest?.paymentAmount?.currencyCode?.toLowerCase() in zeroDecimalCurrencies",
+                            "evaluate": true,
+                            "to": [
+                                "isZeroDecimalCurrency"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "expression": "'adyen.url'.getPackageProperty() != null",
+                    "children": [
+                        {
+                            "type": "fork",
+                            "label": "true",
+                            "comments": "What is the payment request type?",
+                            "expression": "paymentRequest.requestType",
+                            "children": [
+                                {
+                                    "type": "block",
+                                    "label": "authorise",
+                                    "children": [
+                                        {
+                                            "type": "invokeGloop",
+                                            "name": "gateways.adyen.requestTypes.Authorise",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "AuthoriseOutput",
+                                                            "type": "model",
+                                                            "reference": "gateways.adyen.requestTypes.models.AuthoriseOutput",
+                                                            "allowExtraProperties": true
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "number"
+                                                    ],
+                                                    "to": [
+                                                        "AuthoriseInput",
+                                                        "card",
+                                                        "number"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "verificationValue"
+                                                    ],
+                                                    "to": [
+                                                        "AuthoriseInput",
+                                                        "card",
+                                                        "cvc"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "holderName"
+                                                    ],
+                                                    "to": [
+                                                        "AuthoriseInput",
+                                                        "card",
+                                                        "holderName"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "paymentAmount",
+                                                        "currencyCode"
+                                                    ],
+                                                    "to": [
+                                                        "AuthoriseInput",
+                                                        "amount",
+                                                        "currency"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "AuthoriseInput",
+                                                        "reference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "authorisation",
+                                                        "creditCard",
+                                                        "expiryYear"
+                                                    ],
+                                                    "to": [
+                                                        "AuthoriseInput",
+                                                        "card",
+                                                        "expiryYear"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'adyen.url'.getPackageProperty() + \"/authorise\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "url"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'adyen.merchantAccount'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "AuthoriseInput",
+                                                        "merchantAccount"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "isZeroDecimalCurrency ? paymentRequest.paymentAmount.value.intValue() : (paymentRequest.paymentAmount.value * 100).intValue()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "AuthoriseInput",
+                                                        "amount",
+                                                        "value"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.authorisation.creditCard.expiryMonth < 10 ? \"0${paymentRequest.authorisation.creditCard.expiryMonth}\" : paymentRequest.authorisation.creditCard.expiryMonth",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "AuthoriseInput",
+                                                        "card",
+                                                        "expiryMonth"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "AuthoriseOutput",
+                                                        "pspReference"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "AuthoriseOutput"
+                                                    ],
+                                                    "to": [
+                                                        "AuthoriseOutput"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "if( $gloopOutput.AuthoriseOutput.status != 200 ) {\n\t$gloopOutput.AuthoriseOutput.message\n}",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.paymentGatewayId",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentResponse?.errors?.message != null ? 'Transaction failed.' : 'Transaction successful.'",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ],
+                                                    "priority": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway reponded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "AuthoriseOutput.asJson( false, false )",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "block",
+                                    "label": "capture",
+                                    "children": [
+                                        {
+                                            "type": "invokeGloop",
+                                            "name": "gateways.adyen.requestTypes.Capture",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "captureOutput",
+                                                            "type": "model",
+                                                            "reference": "gateways.adyen.requestTypes.models.CaptureOutput",
+                                                            "allowExtraProperties": true
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "paymentAmount",
+                                                        "currencyCode"
+                                                    ],
+                                                    "to": [
+                                                        "CaptureInput",
+                                                        "modificationAmount",
+                                                        "currency"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "capture",
+                                                        "serverTransactionReference"
+                                                    ],
+                                                    "to": [
+                                                        "CaptureInput",
+                                                        "originalReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "CaptureInput",
+                                                        "reference"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'adyen.url'.getPackageProperty() + \"/capture\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "url"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'adyen.merchantAccount'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "CaptureInput",
+                                                        "merchantAccount"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "isZeroDecimalCurrency ? paymentRequest.paymentAmount.value.intValue() : (paymentRequest.paymentAmount.value * 100).intValue()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "CaptureInput",
+                                                        "modificationAmount",
+                                                        "value"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "CaptureOutput",
+                                                        "pspReference"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "CaptureOutput"
+                                                    ],
+                                                    "to": [
+                                                        "captureOutput"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "if( $gloopOutput.CaptureOutput.status != 200 ) {\n\t$gloopOutput.CaptureOutput.message\n}",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.paymentGatewayId",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "captured",
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentState"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentResponse?.errors?.message != null ? 'Transaction failed.' : 'Transaction successful.'",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ],
+                                                    "priority": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway responded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "captureOutput.asJson( false, false )",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "block",
+                                    "label": "cancel",
+                                    "children": [
+                                        {
+                                            "type": "invokeGloop",
+                                            "name": "gateways.adyen.requestTypes.Cancel",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "cancelOutput",
+                                                            "type": "model",
+                                                            "reference": "gateways.adyen.requestTypes.models.CancelOutput",
+                                                            "allowExtraProperties": true
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "cancel",
+                                                        "serverTransactionReference"
+                                                    ],
+                                                    "to": [
+                                                        "CancelInput",
+                                                        "originalReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "CancelInput",
+                                                        "reference"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'adyen.url'.getPackageProperty() + \"/cancel\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "url"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'adyen.merchantAccount'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "CancelInput",
+                                                        "merchantAccount"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "CancelOutput",
+                                                        "pspReference"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "CancelOutput"
+                                                    ],
+                                                    "to": [
+                                                        "cancelOutput"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "if( $gloopOutput.CancelOutput.status != 200 ) {\n\t$gloopOutput.CancelOutput.message\n}",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.paymentGatewayId",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentResponse?.errors?.message != null ? 'Transaction failed.' : 'Transaction successful.'",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ],
+                                                    "priority": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway responded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "cancelOutput.asJson( false, false )",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "block",
+                                    "label": "refund",
+                                    "children": [
+                                        {
+                                            "type": "invokeGloop",
+                                            "name": "gateways.adyen.requestTypes.Refund",
+                                            "declare": [
+                                                {
+                                                    "variables": [
+                                                        {
+                                                            "name": "refundOutput",
+                                                            "type": "model",
+                                                            "reference": "gateways.adyen.requestTypes.models.RefundOutput",
+                                                            "allowExtraProperties": true
+                                                        }
+                                                    ]
+                                                }
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "paymentAmount",
+                                                        "currencyCode"
+                                                    ],
+                                                    "to": [
+                                                        "RefundInput",
+                                                        "modificationAmount",
+                                                        "currency"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "refund",
+                                                        "serverTransactionReference"
+                                                    ],
+                                                    "to": [
+                                                        "RefundInput",
+                                                        "originalReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "RefundInput",
+                                                        "reference"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'adyen.url'.getPackageProperty() + \"/refund\"",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "url"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "'adyen.merchantAccount'.getPackageProperty()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "RefundInput",
+                                                        "merchantAccount"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "isZeroDecimalCurrency ? paymentRequest.paymentAmount.value.intValue() : (paymentRequest.paymentAmount.value * 100).intValue()",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "RefundInput",
+                                                        "modificationAmount",
+                                                        "value"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "RefundOutput",
+                                                        "pspReference"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "serverTransactionReference"
+                                                    ]
+                                                },
+                                                {
+                                                    "from": [
+                                                        "RefundOutput"
+                                                    ],
+                                                    "to": [
+                                                        "refundOutput"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "if( $gloopOutput.RefundOutput.status != 200 ) {\n\t$gloopOutput.RefundOutput.message\n}",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "errors",
+                                                        "message"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.paymentGatewayId",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "paymentGatewayId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentResponse?.errors?.message != null ? 'Transaction failed.' : 'Transaction successful.'",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "message"
+                                                    ],
+                                                    "priority": 1
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "type": "invokeCode",
+                                            "className": "io.toro.martini.TrackerMethods",
+                                            "methodName": "addDocumentState",
+                                            "parameters": [
+                                                "java.lang.String",
+                                                "java.lang.String",
+                                                "java.lang.String"
+                                            ],
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentRequest",
+                                                        "trackerId"
+                                                    ],
+                                                    "to": [
+                                                        "internalId"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "Gateway responded",
+                                                    "to": [
+                                                        "stateName"
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "set",
+                                                    "expression": "refundOutput.asJson( false, false )",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "content"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "label": "false",
+                            "lines": [
+                                {
+                                    "type": "set",
+                                    "expression": "Oops! It looks like you dind't setup the gateway. Run the Setup service to fix this error.",
+                                    "to": [
+                                        "paymentResponse",
+                                        "errors",
+                                        "message"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "name": "io.toro.payment.api.responses.Error",
+                    "inputs": [
+                        {
+                            "from": [
+                                "paymentRequest"
+                            ],
+                            "to": [
+                                "paymentRequest"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "paymentResponse"
+                            ],
+                            "to": [
+                                "paymentResponse"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "lines": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "paymentResponse",
+                                "errors",
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

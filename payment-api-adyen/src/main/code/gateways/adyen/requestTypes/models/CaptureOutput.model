@@ -1,0 +1,26 @@
+{
+    "name": "CaptureOutput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "status",
+            "type": "integer"
+        },
+        {
+            "name": "errorCode"
+        },
+        {
+            "name": "message"
+        },
+        {
+            "name": "errorType"
+        },
+        {
+            "name": "pspReference"
+        },
+        {
+            "name": "response"
+        }
+    ]
+}

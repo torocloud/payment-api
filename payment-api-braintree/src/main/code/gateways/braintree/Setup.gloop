@@ -1,0 +1,133 @@
+{
+    "input": [
+        {
+            "name": "environment",
+            "choices": [
+                "SANDBOX",
+                "PRODUCTION"
+            ],
+            "allowOtherValues": true
+        },
+        {
+            "name": "merchantId"
+        },
+        {
+            "name": "publicKey"
+        },
+        {
+            "name": "privateKey"
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "type": "set",
+                            "expression": "braintree.environment",
+                            "to": [
+                                "key"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "environment"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "merchantId"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "braintree.merchantId",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "publicKey"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "braintree.publicKey",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.GroovyMethods",
+                    "methodName": "savePackageProperty",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.String"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "privateKey"
+                            ],
+                            "to": [
+                                "value"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "braintree.privateKey",
+                            "to": [
+                                "key"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

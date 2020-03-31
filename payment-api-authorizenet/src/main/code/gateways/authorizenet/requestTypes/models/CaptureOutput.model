@@ -1,0 +1,114 @@
+{
+    "name": "CaptureOutput",
+    "type": "model",
+    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "messages",
+            "type": "model",
+            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "resultCode",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                },
+                {
+                    "name": "message",
+                    "type": "model",
+                    "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "code",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        },
+                        {
+                            "name": "text",
+                            "namespaceUri": "AnetApi/xml/v1/schema/AnetApiSchema.xsd"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "transactionResponse",
+            "type": "model",
+            "gloopProperties": [
+                {
+                    "name": "responseCode"
+                },
+                {
+                    "name": "authCode"
+                },
+                {
+                    "name": "avsResultCode"
+                },
+                {
+                    "name": "cvvResultCode"
+                },
+                {
+                    "name": "cavvResultCode"
+                },
+                {
+                    "name": "transId"
+                },
+                {
+                    "name": "refTransID"
+                },
+                {
+                    "name": "transHash"
+                },
+                {
+                    "name": "testRequest"
+                },
+                {
+                    "name": "accountNumber"
+                },
+                {
+                    "name": "accountType"
+                },
+                {
+                    "name": "messages",
+                    "type": "model",
+                    "gloopProperties": [
+                        {
+                            "name": "message",
+                            "type": "model",
+                            "gloopProperties": [
+                                {
+                                    "name": "code"
+                                },
+                                {
+                                    "name": "description"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "transHashSha2"
+                },
+                {
+                    "name": "errors",
+                    "type": "model",
+                    "gloopProperties": [
+                        {
+                            "name": "error",
+                            "type": "model",
+                            "gloopProperties": [
+                                {
+                                    "name": "errorCode"
+                                },
+                                {
+                                    "name": "errorText"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

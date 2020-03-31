@@ -1,0 +1,26 @@
+{
+    "name": "PaypalAccessTokenGeneratorOutput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "scope"
+        },
+        {
+            "name": "access_token"
+        },
+        {
+            "name": "token_type"
+        },
+        {
+            "name": "app_id"
+        },
+        {
+            "name": "expires_in",
+            "type": "bigDecimal"
+        },
+        {
+            "name": "nonce"
+        }
+    ]
+}

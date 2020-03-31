@@ -1,0 +1,58 @@
+{
+    "name": "AuthorizeInput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "payment_source",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "card",
+                    "type": "model",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "name"
+                        },
+                        {
+                            "name": "number"
+                        },
+                        {
+                            "name": "expiry"
+                        },
+                        {
+                            "name": "security_code"
+                        },
+                        {
+                            "name": "billing_address",
+                            "type": "model",
+                            "allowExtraProperties": true,
+                            "gloopProperties": [
+                                {
+                                    "name": "address_line_1"
+                                },
+                                {
+                                    "name": "address_line_2"
+                                },
+                                {
+                                    "name": "admin_area_2"
+                                },
+                                {
+                                    "name": "admin_area_1"
+                                },
+                                {
+                                    "name": "postal_code"
+                                },
+                                {
+                                    "name": "country_code"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

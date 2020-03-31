@@ -1,0 +1,137 @@
+{
+    "input": [
+        {
+            "name": "authoriseInput",
+            "type": "model",
+            "reference": "io.toro.payment.api.gateways.fake.requestTypes.models.AuthoriseInput"
+        }
+    ],
+    "output": [
+        {
+            "name": "authoriseOutput",
+            "type": "model",
+            "reference": "io.toro.payment.api.gateways.fake.requestTypes.models.AuthoriseOutput"
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "declare": [
+                        {
+                            "variables": [
+                                {
+                                    "name": "cardLimit",
+                                    "type": "double"
+                                }
+                            ]
+                        }
+                    ],
+                    "lines": [
+                        {
+                            "type": "set",
+                            "expression": "'fake.card.balance'.getPackageProperty()",
+                            "evaluate": true,
+                            "to": [
+                                "cardLimit"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "expression": "authoriseInput.amount > cardLimit || (authoriseInput.amount as String).contains( '.99' )",
+                    "children": [
+                        {
+                            "type": "block",
+                            "label": "true",
+                            "children": [
+                                {
+                                    "lines": [
+                                        {
+                                            "type": "set",
+                                            "expression": "ERROR",
+                                            "to": [
+                                                "authoriseOutput",
+                                                "paymentStatus"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "block",
+                            "label": "false",
+                            "children": [
+                                {
+                                    "lines": [
+                                        {
+                                            "from": [
+                                                "authoriseInput",
+                                                "amount"
+                                            ],
+                                            "to": [
+                                                "authoriseOutput",
+                                                "authorizedAmount"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "AUTHORISED",
+                                            "to": [
+                                                "authoriseOutput",
+                                                "paymentStatus"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "USD",
+                                            "to": [
+                                                "authoriseOutput",
+                                                "currencyCode"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

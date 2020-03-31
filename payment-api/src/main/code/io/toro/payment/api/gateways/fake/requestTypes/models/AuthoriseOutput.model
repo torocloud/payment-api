@@ -1,0 +1,52 @@
+{
+    "name": "AuthoriseOutput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "orderCode"
+        },
+        {
+            "name": "token"
+        },
+        {
+            "name": "authorizedAmount",
+            "type": "bigDecimal"
+        },
+        {
+            "name": "currencyCode"
+        },
+        {
+            "name": "authorizeOnly",
+            "type": "boolean"
+        },
+        {
+            "name": "paymentStatus"
+        },
+        {
+            "name": "paymentResponse",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "type"
+                },
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "expiryMonth"
+                },
+                {
+                    "name": "expiryYear"
+                },
+                {
+                    "name": "cardType"
+                },
+                {
+                    "name": "maskedCardNumber"
+                }
+            ]
+        }
+    ]
+}

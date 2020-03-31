@@ -1,0 +1,96 @@
+{
+    "input": [
+        {
+            "name": "ccNumber",
+            "allowNull": false,
+            "minLength": 13,
+            "maxLength": 19
+        }
+    ],
+    "output": [
+        {
+            "name": "maskedCCNumber"
+        }
+    ],
+    "steps": [
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "while",
+                    "comments": "Loops over the length of the card number",
+                    "expression": "ccNumber.length()",
+                    "evaluate": true,
+                    "children": [
+                        {
+                            "type": "fork",
+                            "comments": "If $gloopCount is less than the card number's length minus 4, mask each number with x",
+                            "expression": "$gloopCount <= (ccNumber.length() - 4)",
+                            "children": [
+                                {
+                                    "label": "true",
+                                    "lines": [
+                                        {
+                                            "type": "set",
+                                            "expression": "maskedCCNumber != null ? ( maskedCCNumber += \"x\" ) : ( maskedCCNumber = \"x\" )",
+                                            "evaluate": true,
+                                            "to": [
+                                                "maskedCCNumber"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "label": "false",
+                                    "comments": "Always leave out the last 4 digits of the card number",
+                                    "lines": [
+                                        {
+                                            "type": "set",
+                                            "expression": "maskedCCNumber != null ? ( maskedCCNumber += ccNumber[$gloopIndex] ) : ( maskedCCNumber = ccNumber[$gloopIndex] )",
+                                            "evaluate": true,
+                                            "to": [
+                                                "maskedCCNumber"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

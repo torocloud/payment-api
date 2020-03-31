@@ -1,0 +1,438 @@
+{
+    "name": "CaptureOutput",
+    "type": "model",
+    "allowExtraProperties": true,
+    "gloopProperties": [
+        {
+            "name": "id"
+        },
+        {
+            "name": "object"
+        },
+        {
+            "name": "amount",
+            "type": "bigDecimal"
+        },
+        {
+            "name": "amount_refunded",
+            "type": "bigDecimal"
+        },
+        {
+            "name": "application",
+            "type": "object"
+        },
+        {
+            "name": "application_fee",
+            "type": "object"
+        },
+        {
+            "name": "application_fee_amount",
+            "type": "object"
+        },
+        {
+            "name": "balance_transaction"
+        },
+        {
+            "name": "billing_details",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "address",
+                    "type": "model",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "city"
+                        },
+                        {
+                            "name": "country"
+                        },
+                        {
+                            "name": "line1"
+                        },
+                        {
+                            "name": "line2"
+                        },
+                        {
+                            "name": "postal_code"
+                        },
+                        {
+                            "name": "state"
+                        }
+                    ]
+                },
+                {
+                    "name": "email",
+                    "type": "object"
+                },
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "phone",
+                    "type": "object"
+                }
+            ]
+        },
+        {
+            "name": "captured",
+            "type": "boolean"
+        },
+        {
+            "name": "created",
+            "type": "bigDecimal"
+        },
+        {
+            "name": "currency"
+        },
+        {
+            "name": "customer",
+            "type": "object"
+        },
+        {
+            "name": "description",
+            "type": "object"
+        },
+        {
+            "name": "destination",
+            "type": "object"
+        },
+        {
+            "name": "dispute",
+            "type": "object"
+        },
+        {
+            "name": "disputed",
+            "type": "boolean"
+        },
+        {
+            "name": "failure_code",
+            "type": "object"
+        },
+        {
+            "name": "failure_message",
+            "type": "object"
+        },
+        {
+            "name": "fraud_details",
+            "type": "model",
+            "allowExtraProperties": true
+        },
+        {
+            "name": "invoice",
+            "type": "object"
+        },
+        {
+            "name": "livemode",
+            "type": "boolean"
+        },
+        {
+            "name": "metadata",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "refId"
+                },
+                {
+                    "name": "orderId"
+                }
+            ]
+        },
+        {
+            "name": "on_behalf_of",
+            "type": "object"
+        },
+        {
+            "name": "order",
+            "type": "object"
+        },
+        {
+            "name": "outcome",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "network_status"
+                },
+                {
+                    "name": "reason",
+                    "type": "object"
+                },
+                {
+                    "name": "risk_level"
+                },
+                {
+                    "name": "risk_score",
+                    "type": "bigDecimal"
+                },
+                {
+                    "name": "seller_message"
+                },
+                {
+                    "name": "type"
+                }
+            ]
+        },
+        {
+            "name": "paid",
+            "type": "boolean"
+        },
+        {
+            "name": "payment_intent",
+            "type": "object"
+        },
+        {
+            "name": "payment_method"
+        },
+        {
+            "name": "payment_method_details",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "card",
+                    "type": "model",
+                    "allowExtraProperties": true,
+                    "gloopProperties": [
+                        {
+                            "name": "brand"
+                        },
+                        {
+                            "name": "checks",
+                            "type": "model",
+                            "allowExtraProperties": true,
+                            "gloopProperties": [
+                                {
+                                    "name": "address_line1_check"
+                                },
+                                {
+                                    "name": "address_postal_code_check"
+                                },
+                                {
+                                    "name": "cvc_check"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "country"
+                        },
+                        {
+                            "name": "exp_month",
+                            "type": "bigDecimal"
+                        },
+                        {
+                            "name": "exp_year",
+                            "type": "bigDecimal"
+                        },
+                        {
+                            "name": "fingerprint"
+                        },
+                        {
+                            "name": "funding"
+                        },
+                        {
+                            "name": "installments",
+                            "type": "object"
+                        },
+                        {
+                            "name": "last4"
+                        },
+                        {
+                            "name": "network"
+                        },
+                        {
+                            "name": "three_d_secure",
+                            "type": "object"
+                        },
+                        {
+                            "name": "wallet",
+                            "type": "object"
+                        }
+                    ]
+                },
+                {
+                    "name": "type"
+                }
+            ]
+        },
+        {
+            "name": "receipt_email",
+            "type": "object"
+        },
+        {
+            "name": "receipt_number",
+            "type": "object"
+        },
+        {
+            "name": "receipt_url"
+        },
+        {
+            "name": "refunded",
+            "type": "boolean"
+        },
+        {
+            "name": "refunds",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "object"
+                },
+                {
+                    "name": "data",
+                    "type": "object",
+                    "array": true
+                },
+                {
+                    "name": "has_more",
+                    "type": "boolean"
+                },
+                {
+                    "name": "total_count",
+                    "type": "bigDecimal"
+                },
+                {
+                    "name": "url"
+                }
+            ]
+        },
+        {
+            "name": "review",
+            "type": "object"
+        },
+        {
+            "name": "shipping",
+            "type": "object"
+        },
+        {
+            "name": "source",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "id"
+                },
+                {
+                    "name": "object"
+                },
+                {
+                    "name": "address_city"
+                },
+                {
+                    "name": "address_country"
+                },
+                {
+                    "name": "address_line1"
+                },
+                {
+                    "name": "address_line1_check"
+                },
+                {
+                    "name": "address_line2"
+                },
+                {
+                    "name": "address_state"
+                },
+                {
+                    "name": "address_zip"
+                },
+                {
+                    "name": "address_zip_check"
+                },
+                {
+                    "name": "brand"
+                },
+                {
+                    "name": "country"
+                },
+                {
+                    "name": "customer",
+                    "type": "object"
+                },
+                {
+                    "name": "cvc_check"
+                },
+                {
+                    "name": "dynamic_last4",
+                    "type": "object"
+                },
+                {
+                    "name": "exp_month",
+                    "type": "bigDecimal"
+                },
+                {
+                    "name": "exp_year",
+                    "type": "bigDecimal"
+                },
+                {
+                    "name": "fingerprint"
+                },
+                {
+                    "name": "funding"
+                },
+                {
+                    "name": "last4"
+                },
+                {
+                    "name": "metadata",
+                    "type": "model",
+                    "allowExtraProperties": true
+                },
+                {
+                    "name": "name"
+                },
+                {
+                    "name": "tokenization_method",
+                    "type": "object"
+                }
+            ]
+        },
+        {
+            "name": "source_transfer",
+            "type": "object"
+        },
+        {
+            "name": "statement_descriptor",
+            "type": "object"
+        },
+        {
+            "name": "statement_descriptor_suffix",
+            "type": "object"
+        },
+        {
+            "name": "status"
+        },
+        {
+            "name": "transfer_data",
+            "type": "object"
+        },
+        {
+            "name": "transfer_group",
+            "type": "object"
+        },
+        {
+            "name": "error",
+            "type": "model",
+            "allowExtraProperties": true,
+            "gloopProperties": [
+                {
+                    "name": "code"
+                },
+                {
+                    "name": "doc_url"
+                },
+                {
+                    "name": "message"
+                },
+                {
+                    "name": "type"
+                },
+                {
+                    "name": "param"
+                }
+            ]
+        }
+    ]
+}

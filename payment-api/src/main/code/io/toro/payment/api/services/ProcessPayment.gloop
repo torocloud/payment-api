@@ -1,0 +1,1519 @@
+{
+    "comments": "This is the exposed service via Gloop API. All request will be sent here.",
+    "input": [
+        {
+            "name": "paymentRequest",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentRequest"
+        }
+    ],
+    "output": [
+        {
+            "name": "paymentResponse",
+            "type": "model",
+            "reference": "io.toro.payment.api.models.PaymentResponse"
+        },
+        {
+            "name": "responseCode",
+            "type": "integer",
+            "defaultValue": 200
+        }
+    ],
+    "steps": [
+        {
+            "comments": "Declare and map the tracker request",
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "authorisation",
+                            "type": "model",
+                            "reference": "io.toro.payment.api.models.Authorisation"
+                        },
+                        {
+                            "name": "trackerRequest",
+                            "type": "model",
+                            "gloopProperties": [
+                                {
+                                    "name": "orderId",
+                                    "allowNull": false,
+                                    "minLength": 5,
+                                    "maxLength": 80
+                                },
+                                {
+                                    "name": "storeInstance",
+                                    "allowNull": false,
+                                    "minLength": 5,
+                                    "maxLength": 20
+                                },
+                                {
+                                    "name": "paymentGatewayId",
+                                    "allowNull": false,
+                                    "minLength": 3,
+                                    "maxLength": 20
+                                },
+                                {
+                                    "name": "requestType",
+                                    "allowNull": false,
+                                    "minLength": 6,
+                                    "maxLength": 9,
+                                    "choices": [
+                                        "authorise",
+                                        "tokenise",
+                                        "capture",
+                                        "refund",
+                                        "cancel"
+                                    ]
+                                },
+                                {
+                                    "name": "payment",
+                                    "type": "model",
+                                    "gloopProperties": [
+                                        {
+                                            "name": "value",
+                                            "type": "double",
+                                            "min": 0.5
+                                        },
+                                        {
+                                            "name": "currencyCode",
+                                            "minLength": 3,
+                                            "maxLength": 3
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "creditCard",
+                                    "type": "model",
+                                    "gloopProperties": [
+                                        {
+                                            "name": "holderName",
+                                            "allowNull": false,
+                                            "minLength": 2,
+                                            "maxLength": 30
+                                        },
+                                        {
+                                            "name": "type",
+                                            "allowNull": false,
+                                            "choices": [
+                                                "visa",
+                                                "mastercard",
+                                                "jcb",
+                                                "discover",
+                                                "amex",
+                                                "diner"
+                                            ]
+                                        },
+                                        {
+                                            "name": "number",
+                                            "allowNull": false
+                                        },
+                                        {
+                                            "name": "verificationValue",
+                                            "allowNull": false,
+                                            "minLength": 3,
+                                            "maxLength": 4
+                                        },
+                                        {
+                                            "name": "expiryMonth",
+                                            "type": "short",
+                                            "allowNull": false,
+                                            "defaultValue": 1
+                                        },
+                                        {
+                                            "name": "expiryYear",
+                                            "allowNull": false
+                                        },
+                                        {
+                                            "name": "cardToken",
+                                            "defaultValue": "",
+                                            "minLength": 0,
+                                            "maxLength": 100
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "billingAddress",
+                                    "type": "model",
+                                    "gloopProperties": [
+                                        {
+                                            "name": "firstName",
+                                            "minLength": 2,
+                                            "maxLength": 30
+                                        },
+                                        {
+                                            "name": "lastName",
+                                            "minLength": 2,
+                                            "maxLength": 30
+                                        },
+                                        {
+                                            "name": "companyName",
+                                            "minLength": 0,
+                                            "maxLength": 50
+                                        },
+                                        {
+                                            "name": "line1",
+                                            "minLength": 4,
+                                            "maxLength": 30
+                                        },
+                                        {
+                                            "name": "line2",
+                                            "minLength": 0,
+                                            "maxLength": 30
+                                        },
+                                        {
+                                            "name": "city",
+                                            "minLength": 2,
+                                            "maxLength": 30
+                                        },
+                                        {
+                                            "name": "state",
+                                            "minLength": 2,
+                                            "maxLength": 30
+                                        },
+                                        {
+                                            "name": "countryCode",
+                                            "minLength": 2,
+                                            "maxLength": 2
+                                        },
+                                        {
+                                            "name": "postalCode",
+                                            "type": "integer"
+                                        },
+                                        {
+                                            "name": "phoneNumber",
+                                            "minLength": 3,
+                                            "maxLength": 12
+                                        },
+                                        {
+                                            "name": "email",
+                                            "minLength": 0,
+                                            "maxLength": 20
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "state"
+                        },
+                        {
+                            "name": "trackerId"
+                        },
+                        {
+                            "name": "trackerDocumentExists",
+                            "type": "boolean",
+                            "defaultValue": false
+                        },
+                        {
+                            "name": "ccNumber"
+                        }
+                    ]
+                }
+            ],
+            "lines": [
+                {
+                    "from": [
+                        "paymentRequest",
+                        "orderId"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "orderId"
+                    ]
+                },
+                {
+                    "from": [
+                        "paymentRequest",
+                        "storeInstance"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "storeInstance"
+                    ]
+                },
+                {
+                    "from": [
+                        "paymentRequest",
+                        "paymentGatewayId"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "paymentGatewayId"
+                    ]
+                },
+                {
+                    "from": [
+                        "paymentRequest",
+                        "requestType"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "requestType"
+                    ]
+                },
+                {
+                    "from": [
+                        "paymentRequest",
+                        "paymentAmount",
+                        "value"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "payment",
+                        "value"
+                    ]
+                },
+                {
+                    "from": [
+                        "paymentRequest",
+                        "paymentAmount",
+                        "currencyCode"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "payment",
+                        "currencyCode"
+                    ]
+                },
+                {
+                    "from": [
+                        "paymentRequest",
+                        "trackerId"
+                    ],
+                    "to": [
+                        "trackerId"
+                    ]
+                },
+                {
+                    "from": [
+                        "paymentRequest",
+                        "billingAddress"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "billingAddress"
+                    ]
+                },
+                {
+                    "from": [
+                        "paymentRequest",
+                        "authorisation",
+                        "creditCard",
+                        "cardToken"
+                    ],
+                    "to": [
+                        "trackerRequest",
+                        "creditCard",
+                        "cardToken"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "***",
+                    "to": [
+                        "trackerRequest",
+                        "creditCard",
+                        "verificationValue"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "paymentRequest.authorisation?.creditCard?.holderName ?: paymentRequest.tokenise?.holderName",
+                    "evaluate": true,
+                    "to": [
+                        "trackerRequest",
+                        "creditCard",
+                        "holderName"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "paymentRequest.authorisation?.creditCard?.type ?: paymentRequest.tokenise?.type",
+                    "evaluate": true,
+                    "to": [
+                        "trackerRequest",
+                        "creditCard",
+                        "type"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "paymentRequest.authorisation?.creditCard?.number ?: paymentRequest.tokenise?.number",
+                    "evaluate": true,
+                    "to": [
+                        "trackerRequest",
+                        "creditCard",
+                        "number"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "paymentRequest.authorisation?.creditCard?.expiryMonth ?: paymentRequest.tokenise?.expiryMonth",
+                    "evaluate": true,
+                    "to": [
+                        "trackerRequest",
+                        "creditCard",
+                        "expiryMonth"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "paymentRequest.authorisation?.creditCard?.expiryYear ?: paymentRequest.tokenise?.expiryYear",
+                    "evaluate": true,
+                    "to": [
+                        "trackerRequest",
+                        "creditCard",
+                        "expiryYear"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "block",
+            "blockType": "TRY_CATCH",
+            "children": [
+                {
+                    "type": "fork",
+                    "comments": "Check if the trackerId is null, if not null, check if it exists",
+                    "expression": "!org.apache.commons.lang3.StringUtils.isEmpty( trackerId )",
+                    "children": [
+                        {
+                            "type": "invokeCode",
+                            "label": "true",
+                            "comments": "Get the tracker document if there's a provided trackerId",
+                            "className": "io.toro.martini.TrackerMethods",
+                            "methodName": "getTrackerDocument",
+                            "parameters": [
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "from": [
+                                        "paymentRequest",
+                                        "trackerId"
+                                    ],
+                                    "to": [
+                                        "internalId"
+                                    ]
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "type": "set",
+                                    "expression": "!org.apache.commons.lang3.StringUtils.isEmpty( $gloopOutput?.trackerDocument?.internalId )",
+                                    "evaluate": true,
+                                    "to": [
+                                        "trackerDocumentExists"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "invokeGloop",
+                            "label": "false",
+                            "name": "io.toro.payment.api.utils.gloop.GenerateTrackerId",
+                            "inputs": [
+                                {
+                                    "from": [
+                                        "paymentRequest",
+                                        "paymentGatewayId"
+                                    ],
+                                    "to": [
+                                        "gateway"
+                                    ]
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "from": [
+                                        "trackerId"
+                                    ],
+                                    "to": [
+                                        "paymentResponse",
+                                        "trackerId"
+                                    ]
+                                },
+                                {
+                                    "from": [
+                                        "trackerId"
+                                    ],
+                                    "to": [
+                                        "paymentRequest",
+                                        "trackerId"
+                                    ]
+                                },
+                                {
+                                    "from": [
+                                        "trackerId"
+                                    ],
+                                    "to": [
+                                        "trackerId"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "expression": "paymentRequest.authorisation?.creditCard?.number || paymentRequest.tokenise?.number",
+                    "children": [
+                        {
+                            "type": "invokeGloop",
+                            "label": "true",
+                            "comments": "Mask the card number before saving or updating the tracker document associated for this transaction",
+                            "name": "io.toro.payment.api.utils.gloop.MaskCreditCardNumber",
+                            "inputs": [
+                                {
+                                    "type": "set",
+                                    "expression": "paymentRequest.authorisation.creditCard.number ?: paymentRequest.tokenise.number",
+                                    "evaluate": true,
+                                    "to": [
+                                        "ccNumber"
+                                    ]
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "from": [
+                                        "maskedCCNumber"
+                                    ],
+                                    "to": [
+                                        "trackerRequest",
+                                        "creditCard",
+                                        "number"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "label": "mod10check",
+                    "comments": "If Card number is valid, proceed with the payment transaction",
+                    "expression": "paymentRequest.requestType.equalsIgnoreCase( 'authorise' ) || paymentRequest.requestType.equalsIgnoreCase( 'tokenise' )",
+                    "children": [
+                        {
+                            "type": "block",
+                            "label": "true",
+                            "children": [
+                                {
+                                    "type": "fork",
+                                    "comments": "Check the request type",
+                                    "expression": "paymentRequest.requestType",
+                                    "children": [
+                                        {
+                                            "type": "fork",
+                                            "label": "authorise",
+                                            "comments": "if the card token is null or empty, it means we are authorizing a transaction using a credit card",
+                                            "expression": "org.apache.commons.lang3.StringUtils.isEmpty( paymentRequest.authorisation.creditCard.cardToken )",
+                                            "children": [
+                                                {
+                                                    "type": "fork",
+                                                    "label": "true",
+                                                    "comments": "Validate if the card number is empty",
+                                                    "expression": "org.apache.commons.lang3.StringUtils.isEmpty( paymentRequest.authorisation.creditCard.number )",
+                                                    "children": [
+                                                        {
+                                                            "type": "block",
+                                                            "label": "true",
+                                                            "children": [
+                                                                {
+                                                                    "comments": "Map the error response",
+                                                                    "lines": [
+                                                                        {
+                                                                            "type": "set",
+                                                                            "expression": "Transaction failed. If not authorizing using card token, credit card number should not be empty",
+                                                                            "to": [
+                                                                                "paymentResponse",
+                                                                                "errors",
+                                                                                "message"
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "type": "set",
+                                                                            "expression": "paymentRequest.paymentGatewayId",
+                                                                            "evaluate": true,
+                                                                            "to": [
+                                                                                "paymentResponse",
+                                                                                "paymentGatewayId"
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "fork",
+                                                                    "comments": "Add the document state to the existing tracker document with {{state}} that the card is invalid if any, else create a new one",
+                                                                    "expression": "trackerDocumentExists",
+                                                                    "children": [
+                                                                        {
+                                                                            "type": "invokeCode",
+                                                                            "label": "true",
+                                                                            "className": "io.toro.martini.TrackerMethods",
+                                                                            "methodName": "addDocumentState",
+                                                                            "parameters": [
+                                                                                "java.lang.String",
+                                                                                "java.lang.String",
+                                                                                "java.lang.String"
+                                                                            ],
+                                                                            "inputs": [
+                                                                                {
+                                                                                    "from": [
+                                                                                        "paymentRequest",
+                                                                                        "trackerId"
+                                                                                    ],
+                                                                                    "to": [
+                                                                                        "internalId"
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "type": "set",
+                                                                                    "expression": "Card number not provided",
+                                                                                    "to": [
+                                                                                        "stateName"
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "type": "set",
+                                                                                    "expression": "trackerRequest.asJson( false, false )",
+                                                                                    "evaluate": true,
+                                                                                    "to": [
+                                                                                        "content"
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        {
+                                                                            "type": "invokeCode",
+                                                                            "label": "false",
+                                                                            "className": "io.toro.martini.TrackerMethods",
+                                                                            "methodName": "addDocument",
+                                                                            "parameters": [
+                                                                                "java.lang.String",
+                                                                                "java.lang.String",
+                                                                                "java.lang.String",
+                                                                                "java.lang.String",
+                                                                                "java.lang.String",
+                                                                                "java.lang.String",
+                                                                                "java.lang.String"
+                                                                            ],
+                                                                            "inputs": [
+                                                                                {
+                                                                                    "from": [
+                                                                                        "trackerId"
+                                                                                    ],
+                                                                                    "to": [
+                                                                                        "internalId"
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "from": [
+                                                                                        "paymentRequest",
+                                                                                        "orderId"
+                                                                                    ],
+                                                                                    "to": [
+                                                                                        "externalId"
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "type": "set",
+                                                                                    "expression": "Payment API",
+                                                                                    "to": [
+                                                                                        "documentTypeId"
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "type": "set",
+                                                                                    "expression": "Martini Runtime",
+                                                                                    "to": [
+                                                                                        "senderId"
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "type": "set",
+                                                                                    "expression": "Payment API",
+                                                                                    "to": [
+                                                                                        "receiverId"
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "type": "set",
+                                                                                    "expression": "Card number not provided",
+                                                                                    "to": [
+                                                                                        "stateName"
+                                                                                    ]
+                                                                                },
+                                                                                {
+                                                                                    "type": "set",
+                                                                                    "expression": "trackerRequest.asJson( false, false )",
+                                                                                    "evaluate": true,
+                                                                                    "to": [
+                                                                                        "content"
+                                                                                    ]
+                                                                                }
+                                                                            ]
+                                                                        }
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "break",
+                                                                    "expression": "$gloopService"
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "label": "false",
+                                                            "lines": [
+                                                                {
+                                                                    "type": "set",
+                                                                    "expression": "paymentRequest.authorisation.creditCard.number",
+                                                                    "evaluate": true,
+                                                                    "to": [
+                                                                        "ccNumber"
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "break",
+                                                    "label": "false",
+                                                    "comments": "If not, it means we are authorizing the transaction using  card token, so we break from `mod10check` and skip cc number validation",
+                                                    "expression": "mod10check"
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "label": "tokenise",
+                                            "lines": [
+                                                {
+                                                    "type": "set",
+                                                    "expression": "paymentRequest.tokenise.number",
+                                                    "evaluate": true,
+                                                    "to": [
+                                                        "ccNumber"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Validates the card number if it's a valid number, this check does not do any payment transaction with the card. It just checks if the card number is valid using the mod10 check",
+                                    "declare": [
+                                        {
+                                            "variables": [
+                                                {
+                                                    "name": "isCardValid",
+                                                    "type": "boolean"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "unload": [
+                                        [
+                                            "ccNumber"
+                                        ]
+                                    ],
+                                    "className": "io.toro.payment.api.utils.groovy.Mod10Check",
+                                    "methodName": "checkCard",
+                                    "parameters": [
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "ccNumber"
+                                            ],
+                                            "to": [
+                                                "cardNumber"
+                                            ]
+                                        }
+                                    ],
+                                    "outputs": [
+                                        {
+                                            "from": [
+                                                "output"
+                                            ],
+                                            "to": [
+                                                "isCardValid"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "fork",
+                                    "expression": "isCardValid",
+                                    "children": [
+                                        {
+                                            "type": "block",
+                                            "label": "false",
+                                            "children": [
+                                                {
+                                                    "comments": "Map the error message",
+                                                    "lines": [
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "Invalid card number. Transaction failed.",
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "errors",
+                                                                "message"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "400",
+                                                            "to": [
+                                                                "responseCode"
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "set",
+                                                            "expression": "paymentRequest.paymentGatewayId",
+                                                            "evaluate": true,
+                                                            "to": [
+                                                                "paymentResponse",
+                                                                "paymentGatewayId"
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "fork",
+                                                    "comments": "Add the document state to the existing tracker document with {{state}} that the card is invalid if any, else create a new one",
+                                                    "expression": "trackerDocumentExists",
+                                                    "children": [
+                                                        {
+                                                            "type": "invokeCode",
+                                                            "label": "true",
+                                                            "className": "io.toro.martini.TrackerMethods",
+                                                            "methodName": "addDocumentState",
+                                                            "parameters": [
+                                                                "java.lang.String",
+                                                                "java.lang.String",
+                                                                "java.lang.String"
+                                                            ],
+                                                            "inputs": [
+                                                                {
+                                                                    "from": [
+                                                                        "paymentRequest",
+                                                                        "trackerId"
+                                                                    ],
+                                                                    "to": [
+                                                                        "internalId"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "set",
+                                                                    "expression": "Card number invalid",
+                                                                    "to": [
+                                                                        "stateName"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "set",
+                                                                    "expression": "trackerRequest.asJson( false, false )",
+                                                                    "evaluate": true,
+                                                                    "to": [
+                                                                        "content"
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        },
+                                                        {
+                                                            "type": "invokeCode",
+                                                            "label": "false",
+                                                            "className": "io.toro.martini.TrackerMethods",
+                                                            "methodName": "addDocument",
+                                                            "parameters": [
+                                                                "java.lang.String",
+                                                                "java.lang.String",
+                                                                "java.lang.String",
+                                                                "java.lang.String",
+                                                                "java.lang.String",
+                                                                "java.lang.String",
+                                                                "java.lang.String"
+                                                            ],
+                                                            "inputs": [
+                                                                {
+                                                                    "from": [
+                                                                        "trackerId"
+                                                                    ],
+                                                                    "to": [
+                                                                        "internalId"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "from": [
+                                                                        "paymentRequest",
+                                                                        "orderId"
+                                                                    ],
+                                                                    "to": [
+                                                                        "externalId"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "set",
+                                                                    "expression": "Payment API",
+                                                                    "to": [
+                                                                        "documentTypeId"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "set",
+                                                                    "expression": "Payment API",
+                                                                    "to": [
+                                                                        "senderId"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "set",
+                                                                    "expression": "paymentRequest.paymentGatewayId",
+                                                                    "evaluate": true,
+                                                                    "to": [
+                                                                        "receiverId"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "set",
+                                                                    "expression": "Card number invalid",
+                                                                    "to": [
+                                                                        "stateName"
+                                                                    ]
+                                                                },
+                                                                {
+                                                                    "type": "set",
+                                                                    "expression": "trackerRequest.asJson( false, false )",
+                                                                    "evaluate": true,
+                                                                    "to": [
+                                                                        "content"
+                                                                    ]
+                                                                }
+                                                            ]
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "type": "break",
+                                                    "comments": "Terminate the service, returning the response payload with an error message",
+                                                    "expression": "$gloopService"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "comments": "Convert the request type to a tracker state. The state will be added in the tracker document as an identifier of what the request was trying to do",
+                    "name": "io.toro.payment.api.utils.gloop.ConvertRequestTypeToRequestState",
+                    "inputs": [
+                        {
+                            "from": [
+                                "paymentRequest",
+                                "requestType"
+                            ],
+                            "to": [
+                                "state"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "requestState"
+                            ],
+                            "to": [
+                                "state"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "comments": "Check again if the tracker document for this request already exists",
+                    "expression": "trackerDocumentExists",
+                    "children": [
+                        {
+                            "type": "invokeCode",
+                            "label": "true",
+                            "comments": "Add a new state to the existing tracker document. An action that it's trying to do the {{requestType}} with the payload received as the content",
+                            "className": "io.toro.martini.TrackerMethods",
+                            "methodName": "addDocumentState",
+                            "parameters": [
+                                "java.lang.String",
+                                "java.lang.String",
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "from": [
+                                        "trackerId"
+                                    ],
+                                    "to": [
+                                        "internalId"
+                                    ]
+                                },
+                                {
+                                    "from": [
+                                        "state"
+                                    ],
+                                    "to": [
+                                        "stateName"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "trackerRequest.asJson( false, false )",
+                                    "evaluate": true,
+                                    "to": [
+                                        "content"
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "invokeCode",
+                            "label": "false",
+                            "className": "io.toro.martini.TrackerMethods",
+                            "methodName": "addDocument",
+                            "parameters": [
+                                "java.lang.String",
+                                "java.lang.String",
+                                "java.lang.String",
+                                "java.lang.String",
+                                "java.lang.String",
+                                "java.lang.String",
+                                "java.lang.String"
+                            ],
+                            "inputs": [
+                                {
+                                    "from": [
+                                        "trackerId"
+                                    ],
+                                    "to": [
+                                        "internalId"
+                                    ]
+                                },
+                                {
+                                    "from": [
+                                        "state"
+                                    ],
+                                    "to": [
+                                        "stateName"
+                                    ]
+                                },
+                                {
+                                    "from": [
+                                        "paymentRequest",
+                                        "orderId"
+                                    ],
+                                    "to": [
+                                        "externalId"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "Payment API",
+                                    "to": [
+                                        "documentTypeId"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "Payment API",
+                                    "to": [
+                                        "senderId"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "paymentRequest.paymentGatewayId",
+                                    "evaluate": true,
+                                    "to": [
+                                        "receiverId"
+                                    ]
+                                },
+                                {
+                                    "type": "set",
+                                    "expression": "trackerRequest.asJson( false, false )",
+                                    "evaluate": true,
+                                    "to": [
+                                        "content"
+                                    ]
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "type": "set",
+                                    "expression": "true",
+                                    "to": [
+                                        "trackerDocumentExists"
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "comments": "Invoke the payment gateway requested",
+                    "name": "io.toro.payment.api.services.InvokeGateway",
+                    "inputs": [
+                        {
+                            "from": [
+                                "paymentRequest"
+                            ],
+                            "to": [
+                                "paymentRequest"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "paymentResponse"
+                            ],
+                            "to": [
+                                "paymentResponse"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "invokeGloop",
+                    "comments": "Convert the request type to a tracker state. The state will be added in the tracker document as an identifier of what it has finished successfully",
+                    "name": "io.toro.payment.api.utils.gloop.ConvertRequestTypeToResponseState",
+                    "inputs": [
+                        {
+                            "from": [
+                                "paymentRequest",
+                                "requestType"
+                            ],
+                            "to": [
+                                "state"
+                            ]
+                        }
+                    ],
+                    "outputs": [
+                        {
+                            "from": [
+                                "responseState"
+                            ],
+                            "to": [
+                                "state"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "trackerId",
+                            "evaluate": true,
+                            "to": [
+                                "paymentResponse",
+                                "trackerId"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "comments": "Is there an error message from the response?",
+                    "expression": "!org.apache.commons.lang3.StringUtils.isEmpty( paymentResponse?.errors?.message )",
+                    "children": [
+                        {
+                            "type": "block",
+                            "label": "true",
+                            "children": [
+                                {
+                                    "lines": [
+                                        {
+                                            "from": [
+                                                "trackerId"
+                                            ],
+                                            "to": [
+                                                "paymentResponse",
+                                                "trackerId"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "400",
+                                            "to": [
+                                                "responseCode"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Add a document exception to the existing tracker document with the error message as the content",
+                                    "className": "io.toro.martini.TrackerMethods",
+                                    "methodName": "addDocumentException",
+                                    "parameters": [
+                                        "java.lang.String",
+                                        "java.lang.Exception"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "trackerId"
+                                            ],
+                                            "to": [
+                                                "internalId"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "paymentResponse.errors.message",
+                                            "evaluate": true,
+                                            "to": [
+                                                "ex"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "block",
+                            "label": "false",
+                            "children": [
+                                {
+                                    "type": "fork",
+                                    "comments": "Check if the request is tokenise",
+                                    "expression": "paymentRequest.requestType.equalsIgnoreCase( 'tokenise' )",
+                                    "children": [
+                                        {
+                                            "type": "invokeGloop",
+                                            "label": "true",
+                                            "comments": "if it is, mask the token, then add it to the {paymentResponse}",
+                                            "name": "io.toro.payment.api.utils.gloop.MaskToken",
+                                            "inputs": [
+                                                {
+                                                    "from": [
+                                                        "paymentResponse",
+                                                        "token"
+                                                    ],
+                                                    "to": [
+                                                        "token"
+                                                    ]
+                                                }
+                                            ],
+                                            "outputs": [
+                                                {
+                                                    "from": [
+                                                        "maskedToken"
+                                                    ],
+                                                    "to": [
+                                                        "paymentResponse",
+                                                        "token"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "comments": "Then finally adding the paymentResponse as the content of the tracker document state",
+                                    "className": "io.toro.martini.TrackerMethods",
+                                    "methodName": "addDocumentState",
+                                    "parameters": [
+                                        "java.lang.String",
+                                        "java.lang.String",
+                                        "byte[]"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "trackerId"
+                                            ],
+                                            "to": [
+                                                "internalId"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "paymentResponse.asJson( false, false )",
+                                            "evaluate": true,
+                                            "to": [
+                                                "content"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "paymentResponse.paymentState.equals( 'SUBMITTED_FOR_SETTLEMENT' ) ? 'Submitted for settlement' : state",
+                                            "evaluate": true,
+                                            "to": [
+                                                "stateName"
+                                            ]
+                                        }
+                                    ],
+                                    "outputs": [
+                                        {
+                                            "type": "set",
+                                            "expression": "state.toLowerCase()",
+                                            "evaluate": true,
+                                            "to": [
+                                                "paymentResponse",
+                                                "paymentState"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "catch": [
+                {
+                    "type": "invokeCode",
+                    "className": "io.toro.martini.LoggerMethods",
+                    "methodName": "error",
+                    "parameters": [
+                        "java.lang.String",
+                        "java.lang.Throwable"
+                    ],
+                    "inputs": [
+                        {
+                            "from": [
+                                "$gloopException",
+                                "realException"
+                            ],
+                            "to": [
+                                "throwable"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "gloopStackTrace"
+                            ],
+                            "to": [
+                                "message"
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "type": "fork",
+                    "expression": "trackerDocumentExists",
+                    "children": [
+                        {
+                            "type": "block",
+                            "label": "true",
+                            "children": [
+                                {
+                                    "type": "invokeCode",
+                                    "className": "io.toro.martini.TrackerMethods",
+                                    "methodName": "addDocumentState",
+                                    "parameters": [
+                                        "java.lang.String",
+                                        "java.lang.String",
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "trackerId"
+                                            ],
+                                            "to": [
+                                                "internalId"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "Service Exception",
+                                            "to": [
+                                                "stateName"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "$gloopException.gloopStackTrace.asJson()",
+                                            "evaluate": true,
+                                            "to": [
+                                                "content"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "className": "io.toro.martini.TrackerMethods",
+                                    "methodName": "addDocumentException",
+                                    "parameters": [
+                                        "java.lang.String",
+                                        "java.lang.Exception"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "trackerId"
+                                            ],
+                                            "to": [
+                                                "internalId"
+                                            ]
+                                        },
+                                        {
+                                            "from": [
+                                                "$gloopException",
+                                                "message"
+                                            ],
+                                            "to": [
+                                                "ex"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "type": "block",
+                            "label": "false",
+                            "children": [
+                                {
+                                    "type": "invokeCode",
+                                    "className": "io.toro.martini.TrackerMethods",
+                                    "methodName": "addDocument",
+                                    "parameters": [
+                                        "java.lang.String",
+                                        "java.lang.String",
+                                        "java.lang.String",
+                                        "java.lang.String",
+                                        "java.lang.String",
+                                        "java.lang.String",
+                                        "java.lang.String"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "paymentRequest",
+                                                "orderId"
+                                            ],
+                                            "to": [
+                                                "externalId"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "Payment API",
+                                            "to": [
+                                                "documentTypeId"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "Martini Runtime",
+                                            "to": [
+                                                "senderId"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "Payment API",
+                                            "to": [
+                                                "receiverId"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "$gloopException.gloopStackTrace.asJson()",
+                                            "evaluate": true,
+                                            "to": [
+                                                "content"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "Exception encountered",
+                                            "to": [
+                                                "stateName"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "trackerId ? trackerId : \"payment-${System.currentTimeMillis()}\"",
+                                            "evaluate": true,
+                                            "to": [
+                                                "internalId"
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    "type": "invokeCode",
+                                    "label": "true",
+                                    "className": "io.toro.martini.TrackerMethods",
+                                    "methodName": "addDocumentException",
+                                    "parameters": [
+                                        "java.lang.String",
+                                        "java.lang.Exception"
+                                    ],
+                                    "inputs": [
+                                        {
+                                            "from": [
+                                                "trackerId"
+                                            ],
+                                            "to": [
+                                                "internalId"
+                                            ]
+                                        },
+                                        {
+                                            "type": "set",
+                                            "expression": "$gloopException.message",
+                                            "evaluate": true,
+                                            "to": [
+                                                "ex"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "lines": [
+                        {
+                            "from": [
+                                "paymentRequest",
+                                "paymentGatewayId"
+                            ],
+                            "to": [
+                                "paymentResponse",
+                                "paymentGatewayId"
+                            ]
+                        },
+                        {
+                            "from": [
+                                "$gloopException",
+                                "message"
+                            ],
+                            "to": [
+                                "paymentResponse",
+                                "errors",
+                                "message"
+                            ]
+                        },
+                        {
+                            "type": "set",
+                            "expression": "500",
+                            "to": [
+                                "responseCode"
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

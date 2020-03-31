@@ -1,0 +1,443 @@
+{
+    "input": [
+        {
+            "name": "url",
+            "defaultValue": "https://api.stripe.com/v1/tokens"
+        },
+        {
+            "name": "card_number_",
+            "alias": "card[number]",
+            "defaultValue": "4242424242424242"
+        },
+        {
+            "name": "card_exp_month_",
+            "alias": "card[exp_month]",
+            "defaultValue": "11"
+        },
+        {
+            "name": "card_exp_year_",
+            "alias": "card[exp_year]",
+            "defaultValue": "2020"
+        },
+        {
+            "name": "card_cvc_",
+            "alias": "card[cvc]",
+            "defaultValue": "314"
+        },
+        {
+            "name": "card_name_",
+            "alias": "card[name]",
+            "defaultValue": "John Doe"
+        },
+        {
+            "name": "card_address_line1_",
+            "alias": "card[address_line1]"
+        },
+        {
+            "name": "card_address_line2_",
+            "alias": "card[address_line2]"
+        },
+        {
+            "name": "card_address_city_",
+            "alias": "card[address_city]"
+        },
+        {
+            "name": "card_address_state_",
+            "alias": "card[address_state]"
+        },
+        {
+            "name": "card_address_country_",
+            "alias": "card[address_country]"
+        },
+        {
+            "name": "card_address_zip_",
+            "alias": "card[address_zip]"
+        },
+        {
+            "name": "bearerToken",
+            "defaultValue": "Bearer sk_test_SXiFJO4A8E3qBKgFaiEOCtvp00N7msNDqz"
+        },
+        {
+            "name": "metadata_refId_",
+            "alias": "metadata[refId]"
+        }
+    ],
+    "output": [
+        {
+            "name": "tokenizeOutput",
+            "type": "model",
+            "reference": "gateways.stripe.requestTypes.model.TokenizeOutput",
+            "allowExtraProperties": true
+        }
+    ],
+    "steps": [
+        {
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "bodyParameters",
+                            "type": "model",
+                            "gloopProperties": [
+                                {
+                                    "name": "card_number_",
+                                    "alias": "card[number]"
+                                },
+                                {
+                                    "name": "card_exp_month_",
+                                    "alias": "card[exp_month]"
+                                },
+                                {
+                                    "name": "card_exp_year_",
+                                    "alias": "card[exp_year]"
+                                },
+                                {
+                                    "name": "card_cvc_",
+                                    "alias": "card[cvc]"
+                                },
+                                {
+                                    "name": "card_name_",
+                                    "alias": "card[name]"
+                                },
+                                {
+                                    "name": "card_address_line1_",
+                                    "alias": "card[address_line1]"
+                                },
+                                {
+                                    "name": "card_address_line2_",
+                                    "alias": "card[address_line2]"
+                                },
+                                {
+                                    "name": "card_address_city_",
+                                    "alias": "card[address_city]"
+                                },
+                                {
+                                    "name": "card_address_country_",
+                                    "alias": "card[address_country]"
+                                },
+                                {
+                                    "name": "card_address_zip_",
+                                    "alias": "card[address_zip]"
+                                },
+                                {
+                                    "name": "card_address_state_",
+                                    "alias": "card[address_state]"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "variables": [
+                        {
+                            "name": "headers",
+                            "type": "model",
+                            "array": true,
+                            "reference": "io.toro.martini.http.Header"
+                        }
+                    ]
+                }
+            ],
+            "lines": [
+                {
+                    "from": [
+                        "card_number_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_number_"
+                    ]
+                },
+                {
+                    "from": [
+                        "card_exp_month_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_exp_month_"
+                    ]
+                },
+                {
+                    "from": [
+                        "card_exp_year_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_exp_year_"
+                    ]
+                },
+                {
+                    "from": [
+                        "card_cvc_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_cvc_"
+                    ]
+                },
+                {
+                    "from": [
+                        "card_name_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_name_"
+                    ]
+                },
+                {
+                    "from": [
+                        "card_address_line1_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_address_line1_"
+                    ]
+                },
+                {
+                    "from": [
+                        "card_address_line2_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_address_line2_"
+                    ]
+                },
+                {
+                    "from": [
+                        "card_address_city_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_address_city_"
+                    ]
+                },
+                {
+                    "from": [
+                        "card_address_country_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_address_country_"
+                    ]
+                },
+                {
+                    "from": [
+                        "card_address_zip_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_address_zip_"
+                    ]
+                },
+                {
+                    "from": [
+                        "card_address_state_"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_address_state_"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "header {\n\tname 'Content-Type'\n\tvalue 'application/x-www-form-urlencoded'\n}\nheader {\n\tname 'Authorization'\n\tvalue \"Bearer ${bearerToken}\"\n}\n",
+                    "evaluate": true,
+                    "to": [
+                        "headers"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeGloop",
+            "name": "io.toro.payment.api.utils.gloop.MaskCreditCardNumber",
+            "inputs": [
+                {
+                    "from": [
+                        "card_number_"
+                    ],
+                    "to": [
+                        "ccNumber"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "maskedCCNumber"
+                    ],
+                    "to": [
+                        "bodyParameters",
+                        "card_number_"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "***",
+                    "to": [
+                        "bodyParameters",
+                        "card_cvc_"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.TrackerMethods",
+            "methodName": "addDocumentState",
+            "parameters": [
+                "java.lang.String",
+                "java.lang.String",
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "metadata_refId_"
+                    ],
+                    "to": [
+                        "internalId"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Sent to gateway",
+                    "to": [
+                        "stateName"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "bodyParameters.asJson()",
+                    "evaluate": true,
+                    "to": [
+                        "content"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "set",
+                    "expression": "card_number_",
+                    "evaluate": true,
+                    "to": [
+                        "bodyParameters",
+                        "card_number_"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "card_cvc_",
+                    "evaluate": true,
+                    "to": [
+                        "bodyParameters",
+                        "card_cvc_"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "responseCode",
+                            "type": "integer",
+                            "comments": "The HTTP status code"
+                        }
+                    ]
+                }
+            ],
+            "className": "io.toro.martini.HttpMethods",
+            "methodName": "http",
+            "parameters": [
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.object.property.GloopModel",
+                "java.lang.String",
+                "java.lang.String",
+                "boolean",
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.engine.GloopExecutionContext"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "bodyParameters"
+                    ],
+                    "to": [
+                        "request",
+                        "parameters"
+                    ]
+                },
+                {
+                    "from": [
+                        "headers"
+                    ],
+                    "to": [
+                        "request",
+                        "headers"
+                    ]
+                },
+                {
+                    "from": [
+                        "url"
+                    ],
+                    "to": [
+                        "request",
+                        "uri"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "GloopObject",
+                    "to": [
+                        "returnAs"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Auto Detect",
+                    "to": [
+                        "responseType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "POST",
+                    "to": [
+                        "request",
+                        "method"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "true",
+                    "to": [
+                        "throwHttpExceptions"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "response",
+                        "content"
+                    ],
+                    "to": [
+                        "tokenizeOutput"
+                    ]
+                },
+                {
+                    "from": [
+                        "response",
+                        "responseCode"
+                    ],
+                    "to": [
+                        "responseCode"
+                    ]
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,268 @@
+{
+    "input": [
+        {
+            "name": "url",
+            "defaultValue": "https://api.sandbox.paypal.com/v2/checkout/orders/${orderId}/authorize"
+        },
+        {
+            "name": "orderId",
+            "defaultValue": ""
+        },
+        {
+            "name": "Paypal_Request_Id",
+            "alias": "Paypal-Request-Id",
+            "defaultValue": ""
+        },
+        {
+            "name": "AuthorizeInput",
+            "type": "model",
+            "reference": "gateways.paypal.requestTypes.model.AuthorizeInput"
+        }
+    ],
+    "output": [
+        {
+            "name": "AuthorizeOutput",
+            "type": "model",
+            "reference": "gateways.paypal.requestTypes.model.AuthorizeOutput",
+            "allowExtraProperties": true
+        }
+    ],
+    "steps": [
+        {
+            "declare": [
+                {
+                    "variables": [
+                        {
+                            "name": "headers",
+                            "type": "model",
+                            "array": true,
+                            "reference": "io.toro.martini.http.Header"
+                        },
+                        {
+                            "name": "ccNumber"
+                        },
+                        {
+                            "name": "cvv"
+                        }
+                    ]
+                }
+            ],
+            "lines": [
+                {
+                    "from": [
+                        "AuthorizeInput",
+                        "payment_source",
+                        "card",
+                        "number"
+                    ],
+                    "to": [
+                        "ccNumber"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "header {\n\tname 'Content-Type'\n\tvalue 'application/json'\n}\nheader {\n\tname 'Authorization'\n\tvalue \"Bearer ${'paypal.accessToken'.getPackageProperty( '' )}\"\n}\nheader {\n\tname 'Prefer'\n\tvalue 'return=representation'\n}\nheader {\n\tname 'Paypal-Request-Id'\n\tvalue Paypal_Request_Id\n}\n",
+                    "evaluate": true,
+                    "to": [
+                        "headers"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeGloop",
+            "name": "io.toro.payment.api.utils.gloop.MaskCreditCardNumber",
+            "inputs": [
+                {
+                    "from": [
+                        "ccNumber"
+                    ],
+                    "to": [
+                        "ccNumber"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "maskedCCNumber"
+                    ],
+                    "to": [
+                        "AuthorizeInput",
+                        "payment_source",
+                        "card",
+                        "number"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "**",
+                    "to": [
+                        "AuthorizeInput",
+                        "payment_source",
+                        "card",
+                        "security_code"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "unload": [
+                [
+                    "ccNumber"
+                ],
+                [
+                    "cvv"
+                ]
+            ],
+            "className": "io.toro.martini.TrackerMethods",
+            "methodName": "addDocumentState",
+            "parameters": [
+                "java.lang.String",
+                "java.lang.String",
+                "java.lang.String"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "Paypal_Request_Id"
+                    ],
+                    "to": [
+                        "internalId"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Sent to gateway",
+                    "to": [
+                        "stateName"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "AuthorizeInput.asJson()",
+                    "evaluate": true,
+                    "to": [
+                        "content"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "set",
+                    "expression": "ccNumber",
+                    "evaluate": true,
+                    "to": [
+                        "AuthorizeInput",
+                        "payment_source",
+                        "card",
+                        "number"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "cvv",
+                    "evaluate": true,
+                    "to": [
+                        "AuthorizeInput",
+                        "payment_source",
+                        "card",
+                        "security_code"
+                    ]
+                }
+            ]
+        },
+        {
+            "type": "invokeCode",
+            "className": "io.toro.martini.HttpMethods",
+            "methodName": "http",
+            "parameters": [
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.object.property.GloopModel",
+                "java.lang.String",
+                "java.lang.String",
+                "boolean",
+                "io.toro.gloop.object.property.GloopModel",
+                "io.toro.gloop.engine.GloopExecutionContext"
+            ],
+            "inputs": [
+                {
+                    "from": [
+                        "headers"
+                    ],
+                    "to": [
+                        "request",
+                        "headers"
+                    ]
+                },
+                {
+                    "from": [
+                        "AuthorizeInput"
+                    ],
+                    "to": [
+                        "request",
+                        "body"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "GloopObject",
+                    "to": [
+                        "returnAs"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "Auto Detect",
+                    "to": [
+                        "responseType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "application/json",
+                    "to": [
+                        "request",
+                        "contentType"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "evalStringTemplate( url )",
+                    "evaluate": true,
+                    "to": [
+                        "request",
+                        "uri"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "POST",
+                    "to": [
+                        "request",
+                        "method"
+                    ]
+                },
+                {
+                    "type": "set",
+                    "expression": "true",
+                    "to": [
+                        "throwHttpExceptions"
+                    ]
+                }
+            ],
+            "outputs": [
+                {
+                    "from": [
+                        "response",
+                        "content"
+                    ],
+                    "to": [
+                        "AuthorizeOutput"
+                    ]
+                }
+            ]
+        }
+    ]
+}
